@@ -1,0 +1,14 @@
+.env
+.env.*
+!.env.example
+/config/database.php
+/config/database.local.php
+/vendor/
+/storage/cache/*
+/storage/logs/*
+!/storage/cache/.gitkeep
+!/storage/logs/.gitkeep
+__pycache__/
+*.py[cod]
+.phpunit.cache/
+.DS_Store
