@@ -31,7 +31,7 @@ A recurring task row records its recurrence setting, but recurrence generation b
 
 ## Release sequence
 
-1. Approve the static UI and user workflows.
+1. Review the current static UI preview and agree on the core user workflows.
 2. Implement authentication and the shared shell.
 3. Build Requests end-to-end, then Tasks, Assets, and Inventory in tested vertical slices.
 4. Add notifications, roles/settings, reports, and secondary modules as scoped work.

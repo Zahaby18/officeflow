@@ -4,7 +4,7 @@ OfficeFlow is planned as a self-hosted office operations app. Each customer inst
 
 ## Current status
 
-This repository currently contains the initial database migration, schema checks, and architecture notes. It is **not an installable or production-ready app yet**. Authentication, installer, UI, backups, and the app modules still need to be implemented and tested before deployment or sale.
+This repository currently contains the initial database migration, schema checks, architecture notes, and a **UI-only preview** in `public/`. The preview uses sample data; its buttons do not save to a database. The repo is **not an installable or production-ready app yet**. Authentication, backend, installer, real module workflows, backups, and a buyer ZIP still need to be implemented and tested before sale.
 
 ## First release scope
 
@@ -17,8 +17,10 @@ app/                         PHP application code (to be added)
 config/database.example.php  safe configuration template
 config/database.php          local credentials; ignored by Git
 database/migrations/         forward-only database migrations
-public/                      web document root (to be added)
-docs/                        architecture and installation notes
+public/index.html            static dashboard preview
+public/assets/css/           UI styles
+public/assets/js/            UI preview interactions
+docs/                        architecture and deployment notes
 tests/                       automated schema checks
 ```
 

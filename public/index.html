@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f6f4">
+  <meta name="description" content="OfficeFlow office operations dashboard preview">
+  <title>OfficeFlow | Office operations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/officeflow.css">
+  <script src="assets/js/officeflow.js" defer></script>
+</head>
+<body>
+  <svg class="icon-defs" aria-hidden="true" focusable="false">
+    <symbol id="i-mark" viewBox="0 0 24 24"><path d="M4 16.5 9.5 11l3.5 3.5 7-7M15.5 7.5H20v4.5"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></symbol>
+    <symbol id="i-inbox" viewBox="0 0 24 24"><path d="M4 4h16l2 11v4H2v-4zM2 15h6l2 3h4l2-3h6"/></symbol>
+    <symbol id="i-checklist" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></symbol>
+    <symbol id="i-megaphone" viewBox="0 0 24 24"><path d="m3 10 14-5v14L3 14zM17 10h3a2 2 0 0 1 0 4h-3M6 15l2 6h4l-2.1-5.3"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5zM3 8v9l9 5 9-5V8M12 13v9M7.5 5.5l9 5"/></symbol>
+    <symbol id="i-package" viewBox="0 0 24 24"><path d="m12 3 9 4.5v9L12 21l-9-4.5v-9zM3 7.5l9 5 9-5M12 12.5V21M8 5l9 5"/></symbol>
+    <symbol id="i-tool" viewBox="0 0 24 24"><path d="M14 6a5 5 0 0 0-6.5 6.5L3 17l4 4 4.5-4.5A5 5 0 0 0 18 10l-3 3-4-4z"/></symbol>
+    <symbol id="i-building" viewBox="0 0 24 24"><path d="M4 21V4h11v17M15 9h5v12M8 8h3M8 12h3M8 16h3M18 13h1M18 17h1M2 21h20"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1zM16 5a3 3 0 0 1 0 6M18 14a5 5 0 0 1 3 5v1h-4"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h8l5 5v13H6zM14 3v6h5M9 13h7M9 17h7"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 19V5M4 19h17M8 15l4-5 3 2 5-7"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zM19.4 15l1.2 1-1.5 2.5-1.5-.5a7 7 0 0 1-1.5.9l-.3 1.6h-2.9l-.3-1.6a7 7 0 0 1-1.5-.9l-1.5.5-1.5-2.5 1.2-1a7 7 0 0 1 0-1.8l-1.2-1 1.5-2.5 1.5.5a7 7 0 0 1 1.5-.9l.3-1.6h2.9l.3 1.6a7 7 0 0 1 1.5.9l1.5-.5 1.5 2.5-1.2 1a7 7 0 0 1 0 1.8z"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+  </svg>
+
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+      <a class="brand" href="#home" aria-label="OfficeFlow home">
+        <span class="brand-mark"><svg class="icon"><use href="#i-mark"/></svg></span>
+        <span><strong>OfficeFlow</strong><small>Operations workspace</small></span>
+      </a>
+      <nav class="navigation">
+        <p class="nav-heading">Workspace</p>
+        <button class="nav-link is-active" type="button" data-page="Home"><svg class="icon"><use href="#i-home"/></svg><span>Home</span></button>
+        <button class="nav-link" type="button" data-page="Requests"><svg class="icon"><use href="#i-inbox"/></svg><span>Requests</span><span class="nav-badge">6</span></button>
+        <button class="nav-link" type="button" data-page="Tasks & Checklists"><svg class="icon"><use href="#i-checklist"/></svg><span>Tasks &amp; Checklists</span></button>
+        <button class="nav-link" type="button" data-page="Announcements"><svg class="icon"><use href="#i-megaphone"/></svg><span>Announcements</span></button>
+        <p class="nav-heading">Office resources</p>
+        <button class="nav-link" type="button" data-page="Assets"><svg class="icon"><use href="#i-box"/></svg><span>Assets</span></button>
+        <button class="nav-link" type="button" data-page="Inventory"><svg class="icon"><use href="#i-package"/></svg><span>Inventory</span></button>
+        <button class="nav-link" type="button" data-page="Maintenance"><svg class="icon"><use href="#i-tool"/></svg><span>Maintenance</span></button>
+        <button class="nav-link" type="button" data-page="Rooms & Facilities"><svg class="icon"><use href="#i-building"/></svg><span>Rooms &amp; Facilities</span></button>
+        <button class="nav-link" type="button" data-page="Vendors"><svg class="icon"><use href="#i-users"/></svg><span>Vendors</span></button>
+        <button class="nav-link" type="button" data-page="Documents & SOPs"><svg class="icon"><use href="#i-file"/></svg><span>Documents &amp; SOPs</span></button>
+        <p class="nav-heading">Management</p>
+        <button class="nav-link" type="button" data-page="Team"><svg class="icon"><use href="#i-users"/></svg><span>Team</span></button>
+        <button class="nav-link" type="button" data-page="Reports"><svg class="icon"><use href="#i-chart"/></svg><span>Reports</span></button>
+        <button class="nav-link" type="button" data-page="Activity log"><svg class="icon"><use href="#i-clock"/></svg><span>Activity log</span></button>
+      </nav>
+      <button class="nav-link settings-link" type="button" data-page="Settings"><svg class="icon"><use href="#i-settings"/></svg><span>Settings</span></button>
+      <div class="sidebar-user"><span class="avatar">AD</span><span class="user-copy"><strong>Alya Dwi</strong><small>Office administrator</small></span><span class="demo-label">DEMO</span></div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="icon-button menu-toggle" id="menuToggle" type="button" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false"><svg class="icon"><use href="#i-menu"/></svg></button>
+          <div class="breadcrumb"><span>Workspace</span><span class="slash">/</span><strong id="breadcrumbTitle">Home</strong></div>
+        </div>
+        <div class="topbar-actions">
+          <label class="search-box"><svg class="icon"><use href="#i-search"/></svg><input id="globalSearch" type="search" placeholder="Search workspace" aria-label="Search workspace"></label>
+          <div class="notification-wrap">
+            <button class="icon-button notification-button" id="notificationButton" type="button" aria-label="Notifications, 3 unread" aria-expanded="false" aria-controls="notificationPanel"><svg class="icon"><use href="#i-bell"/></svg><span class="notification-dot" id="notificationDot"></span></button>
+            <section class="notification-panel" id="notificationPanel" aria-label="Notifications" hidden>
+              <div class="notification-head"><div><strong>Notifications</strong><span id="notificationCount">3 new</span></div><button class="text-button" id="markRead" type="button">Mark all read</button></div>
+              <button class="notification-item" type="button" data-page="Requests"><span class="unread-mark"></span><span><strong>New supply request from Rafi</strong><small>Inventory · 8 minutes ago</small></span></button>
+              <button class="notification-item" type="button" data-page="Maintenance"><span class="unread-mark"></span><span><strong>Meeting room AC needs attention</strong><small>Maintenance · 32 minutes ago</small></span></button>
+              <button class="notification-item" type="button" data-page="Tasks & Checklists"><span class="unread-mark"></span><span><strong>Weekly facilities check is due today</strong><small>Tasks · 1 hour ago</small></span></button>
+            </section>
+          </div>
+          <button class="top-profile" type="button" aria-label="Alya Dwi, profile menu"><span class="avatar">AD</span></button>
+        </div>
+      </header>
+
+      <div class="content-area" id="pageContent" aria-live="polite">
+        <section class="page-heading">
+          <div><p class="eyebrow" id="todayLabel">OFFICE OVERVIEW</p><h1>Good morning, Alya</h1><p class="heading-copy">Here’s what needs your attention around the office today.</p></div>
+          <div class="heading-actions"><button class="button button-secondary" id="todayButton" type="button"><svg class="icon"><use href="#i-calendar"/></svg><span>Today</span></button><button class="button button-primary" id="newRequestButton" type="button"><svg class="icon"><use href="#i-plus"/></svg><span>New request</span></button></div>
+        </section>
+
+        <section class="welcome-panel" aria-label="Office status">
+          <div><p class="welcome-kicker">TODAY · OFFICE CHECK-IN</p><h2>Your office, in good order.</h2><p>Three things need a look today. The rest is moving along.</p></div>
+          <div class="readiness"><span>Office readiness</span><strong>92<small>%</small></strong><span>Looking good this week</span></div>
+          <span class="orbit orbit-one" aria-hidden="true"></span><span class="orbit orbit-two" aria-hidden="true"></span>
+        </section>
+
+        <section class="metric-grid" aria-label="Office summary">
+          <article class="metric-card"><div class="metric-label">Open requests<span class="metric-icon"><svg class="icon"><use href="#i-inbox"/></svg></span></div><strong class="metric-value">06</strong><span class="metric-foot positive">↓ 2 <span>from last week</span></span></article>
+          <article class="metric-card"><div class="metric-label">Tasks due today<span class="metric-icon"><svg class="icon"><use href="#i-checklist"/></svg></span></div><strong class="metric-value">08</strong><span class="metric-foot attention">3 need attention</span></article>
+          <article class="metric-card"><div class="metric-label">Assets to inspect<span class="metric-icon"><svg class="icon"><use href="#i-tool"/></svg></span></div><strong class="metric-value">03</strong><span class="metric-foot">Next inspection · <b>tomorrow</b></span></article>
+          <article class="metric-card"><div class="metric-label">Low-stock items<span class="metric-icon"><svg class="icon"><use href="#i-package"/></svg></span></div><strong class="metric-value">02</strong><span class="metric-foot">Review before the next order</span></article>
+        </section>
+
+        <section class="dashboard-grid">
+          <article class="surface request-surface">
+            <header class="surface-heading"><div><h2>Requests that need a hand</h2><p>A quick look at what’s moving through the office</p></div><button class="text-button" type="button" data-page="Requests">View all <span aria-hidden="true">→</span></button></header>
+            <div class="request-list">
+              <div class="request-row"><span class="request-icon facilities"><svg class="icon"><use href="#i-building"/></svg></span><div class="request-copy"><strong>Air conditioning in meeting room 2</strong><small>Facilities · #OF-0248 · 18 min ago</small></div><span class="status status-review">Needs review</span><span class="request-owner"><span class="mini-avatar">AD</span>Alya</span></div>
+              <div class="request-row"><span class="request-icon supplies"><svg class="icon"><use href="#i-package"/></svg></span><div class="request-copy"><strong>Printer paper, A4 (5 boxes)</strong><small>Supplies · #OF-0246 · 1 hour ago</small></div><span class="status status-progress">In progress</span><span class="request-owner"><span class="mini-avatar">RF</span>Rafi</span></div>
+              <div class="request-row"><span class="request-icon equipment"><svg class="icon"><use href="#i-tool"/></svg></span><div class="request-copy"><strong>Replace desk lamp, workstation 08</strong><small>Equipment · #OF-0241 · Yesterday</small></div><span class="status status-overdue">Overdue</span><span class="request-owner"><span class="mini-avatar">NS</span>Nisa</span></div>
+              <div class="request-row"><span class="request-icon documents"><svg class="icon"><use href="#i-file"/></svg></span><div class="request-copy"><strong>Guest access for Thursday meeting</strong><small>Office support · #OF-0239 · Yesterday</small></div><span class="status status-progress">In progress</span><span class="request-owner"><span class="mini-avatar">AD</span>Alya</span></div>
+            </div>
+          </article>
+
+          <div class="right-column">
+            <article class="surface checklist-surface">
+              <header class="surface-heading"><div><h2>Today’s checklist</h2><p><span id="taskProgress">2 of 4</span> completed</p></div><button class="text-button" type="button" data-page="Tasks & Checklists">All tasks <span aria-hidden="true">→</span></button></header>
+              <div class="checklist">
+                <label class="task-row is-done"><input class="task-checkbox" type="checkbox" checked><span class="task-copy"><strong>Prepare meeting room 2</strong><small>Facilities · Recurring</small></span><span class="task-time">9:00 AM</span></label>
+                <label class="task-row is-done"><input class="task-checkbox" type="checkbox" checked><span class="task-copy"><strong>Check pantry supplies</strong><small>Inventory · Recurring</small></span><span class="task-time">10:00 AM</span></label>
+                <label class="task-row"><input class="task-checkbox" type="checkbox"><span class="task-copy"><strong>Receive printer paper</strong><small>Supplies · One-time</small></span><span class="task-time">1:00 PM</span></label>
+                <label class="task-row"><input class="task-checkbox" type="checkbox"><span class="task-copy"><strong>Weekly safety walk-through</strong><small>Facilities · Recurring</small></span><span class="task-time">3:00 PM</span></label>
+              </div>
+            </article>
+            <article class="surface watch-surface">
+              <header class="surface-heading"><div><h2>Keep an eye on</h2><p>A couple of things worth a quick check</p></div><button class="icon-button more-button" type="button" aria-label="More options"><span aria-hidden="true">···</span></button></header>
+              <div class="watch-list">
+                <div class="watch-row"><div><strong>A4 copy paper</strong><small>Office supplies · Reorder point: 5 boxes</small></div><span class="watch-tag tag-low">3 boxes</span></div>
+                <div class="watch-row"><div><strong>Meeting room 2 AC</strong><small>Facility · Reported today</small></div><span class="watch-tag tag-check">Check</span></div>
+              </div>
+            </article>
+          </div>
+        </section>
+        <footer class="preview-footer"><span>OfficeFlow preview</span><span>Sample workspace · Demo data only</span></footer>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="modal-backdrop" id="requestModal" hidden>
+    <section class="request-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDescription">
+      <div class="modal-heading"><div><p class="eyebrow">OFFICE SUPPORT</p><h2 id="modalTitle">Create a request</h2></div><button class="icon-button" id="closeModalButton" type="button" aria-label="Close request form"><svg class="icon"><use href="#i-close"/></svg></button></div>
+      <p class="modal-description" id="modalDescription">Tell the office team what you need help with.</p>
+      <form id="requestForm">
+        <div class="form-field"><label for="requestTitle">Request title</label><input id="requestTitle" name="title" required maxlength="100" placeholder="e.g. Replace the meeting room light"></div>
+        <div class="form-field"><label for="requestCategory">Category</label><select id="requestCategory" name="category"><option>Facilities</option><option>Office supplies</option><option>Equipment</option><option>Other</option></select></div>
+        <div class="form-field"><label for="requestDetails">Details <span>Optional</span></label><textarea id="requestDetails" name="details" rows="3" placeholder="Add helpful context for the office team"></textarea></div>
+        <div class="modal-actions"><button class="button button-secondary" id="cancelRequestButton" type="button">Cancel</button><button class="button button-primary" type="submit">Create request</button></div>
+      </form>
+    </section>
+  </div>
+  <div class="mobile-scrim" id="mobileScrim" hidden></div>
+</body>
+</html>
