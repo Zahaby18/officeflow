@@ -9,7 +9,7 @@ PUBLIC = ROOT / "public"
 class OfficeFlowPreviewTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.html = (PUBLIC / "index.html").read_text(encoding="utf-8")
+        cls.html = (PUBLIC / "preview.html").read_text(encoding="utf-8")
         cls.js = (PUBLIC / "assets" / "js" / "officeflow.js").read_text(encoding="utf-8")
 
     def test_all_fourteen_sidebar_destinations_are_present(self):

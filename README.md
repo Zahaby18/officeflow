@@ -4,7 +4,7 @@ OfficeFlow is planned as a self-hosted office operations app. Each customer inst
 
 ## Current status
 
-This repository currently contains the initial database migration, schema checks, architecture notes, and a **UI-only preview** in `public/`. The preview uses sample data; its buttons do not save to a database. The repo is **not an installable or production-ready app yet**. Authentication, backend, installer, real module workflows, backups, and a buyer ZIP still need to be implemented and tested before sale.
+This repository contains the initial database migration, schema checks, architecture notes, a **static UI preview** at `public/preview.html`, and a working **PHP/MySQL app foundation**: first-time admin setup, login/logout with hardened sessions, CSRF-protected forms, a Home dashboard, and a Requests module with create + admin status transitions. Notifications, Tasks, Assets, Inventory, Team, and Settings are not implemented yet, so the repo is **not a sale-ready product**. Backups, an upgrade path, and the buyer ZIP still need to be built and tested.
 
 ## First release scope
 
@@ -13,18 +13,24 @@ The first usable release is intended to focus on Home, Requests, Tasks & Checkli
 ## Repository layout
 
 ```text
-app/                         PHP application code (to be added)
+app/                         PHP application services, bootstrap, and view partials
+app/views/                   shared header, footer, and icon sprite
 config/database.example.php  safe configuration template
 config/database.php          local credentials; ignored by Git
 database/migrations/         forward-only database migrations
-public/index.html            static dashboard preview
-public/assets/css/           UI styles
-public/assets/js/            UI preview interactions
+public/index.php             authenticated Home dashboard
+public/requests.php          Requests module (create + admin status update)
+public/install.php           first-time admin setup
+public/login.php             sign-in
+public/logout.php            POST-only sign-out
+public/preview.html          static UI preview (no database)
+public/assets/               UI styles and preview interactions
 docs/                        architecture and deployment notes
-tests/                       automated schema checks
+tests/test_*.py              schema and static UI checks
+tests/php/*_test.php         service-level integration checks (SQLite)
 ```
 
-The live document root should point to `public/`; keep `config/`, `database/`, and application code outside the public web root wherever the hosting allows it.
+The live document root should point to `public/`; keep `config/`, `database/`, `app/`, and `tests/` outside the public web root wherever the hosting allows it.
 
 ## Database
 
@@ -34,19 +40,27 @@ For future releases, add a new numbered migration instead of editing a migration
 
 ## Requirements planned for the app
 
-- PHP 8.2 or newer with PDO MySQL
+- PHP 8.2 or newer with PDO MySQL and mbstring
 - MySQL 8.0 or MariaDB 10.6 or newer
 - HTTPS enabled on the customer’s domain
 
 These are initial targets, not a compatibility guarantee until the app is tested against those hosting environments.
 
-## Local schema tests
+## Running the app locally
+
+1. Create an empty MySQL/MariaDB database and import `database/migrations/001_initial_schema.sql`.
+2. Copy `config/database.example.php` to `config/database.php` and enter the connection values.
+3. Serve the `public/` directory (for example `php -S 127.0.0.1:8000 -t public`).
+4. Open the site: the first visit redirects to `install.php` until the first administrator exists.
+
+## Tests
 
 ```bash
 python3 -m unittest discover -s tests -v
+for test in tests/php/*_test.php; do php "$test"; done
 ```
 
-The current tests validate the schema definition. They do not yet test a running PHP app or connect to a database.
+The Python suite validates the schema definition and the static preview. The PHP tests exercise the auth, CSRF, installer, and request services against SQLite. They do not cover a full browser session or MySQL-specific behaviour; run the app locally for that.
 
 ## Security and data ownership
 
@@ -54,4 +68,5 @@ The current tests validate the schema definition. They do not yet test a running
 - Never commit database passwords, customer data, or production backups.
 - Use a separate database account with access only to the OfficeFlow database.
 - Deactivate staff accounts rather than deleting users referenced by office records.
-- A production release needs tested authentication, role checks, CSRF protection, input validation, output escaping, backups, and an update path.
+- Passwords are stored with `password_hash()`; forms are CSRF-protected; all output is escaped; sessions use HttpOnly, SameSite=Lax cookies and regenerate on login.
+- A production release still needs rate limiting on login, backups, and a tested update path.
