@@ -20,7 +20,7 @@ OfficeFlow is drop-in. Upload the folder contents to the web root and open the s
 
 2. **Create the database.** In your panel, add a MySQL database and note the **name**, **user**, and **password**.
 
-3. **Import the schema.** Open phpMyAdmin for that database, choose **Import**, upload `database/migrations/001_initial_schema.sql`, then `002_office_resources.sql`, then run each. Together they create 15 tables.
+3. **Import the schema.** Open phpMyAdmin for that database, choose **Import**, upload `officeflow-schema.sql`, and run it. That one file creates all 15 tables. (The numbered files in `database/migrations/` are only for upgrading an installation that already exists.)
 
    Tiny databases like this are safe in phpMyAdmin. The general warning against importing with phpMyAdmin is about large or already-populated databases, which does not apply here.
 

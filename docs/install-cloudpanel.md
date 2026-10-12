@@ -33,9 +33,11 @@ SFTP uses port 22. Create an SSH/SFTP user under the site's **SSH/FTP** tab and 
 ## 3. Create the database and import the schema
 
 1. CloudPanel: **Databases → Add Database**. Set a database name, user, and a strong password.
-2. On the same page, click **Manage** to open phpMyAdmin, log in as that database user, select the database, then **Import → Choose file → `001_initial_schema.sql` → Go**.
+2. On the same page, click **Manage** to open phpMyAdmin, log in as that database user, select the database, then **Import → Choose file → `officeflow-schema.sql` → Go**.
 
-That is enough for this project: the database is empty and the schema file is about 9 KB. CloudPanel warns against phpMyAdmin for export/import in general, because it can corrupt large or populated databases; that does not apply to importing a small schema into a brand-new empty database.
+`officeflow-schema.sql` creates all 15 tables in one import, which is what a new installation needs. The numbered files in `database/migrations/` are for upgrading an installation that already exists; do not run those on a fresh database unless you prefer two steps instead of one.
+
+That is enough for this project: the database is empty and the schema file is about 13 KB. CloudPanel warns against phpMyAdmin for export/import in general, because it can corrupt large or populated databases; that does not apply to importing a small schema into a brand-new empty database.
 
 The CLI route works too, if you prefer it:
 

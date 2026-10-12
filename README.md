@@ -23,7 +23,8 @@ assets/                      UI styles and preview interactions
 app/                         PHP services, bootstrap, and view partials
 config/database.example.php  safe configuration template
 config/database.php          credentials created during setup; ignored by Git
-database/migrations/         forward-only database migrations
+officeflow-schema.sql        complete schema for a new installation
+database/migrations/         numbered, forward-only migrations for upgrades
 docs/                        architecture and deployment notes
 tests/test_*.py              schema and static UI checks
 tests/php/*_test.php         service-level integration checks (SQLite)
@@ -33,9 +34,9 @@ The app is **drop-in**: upload the project contents straight into the site's web
 
 ## Database
 
-The first migration is `database/migrations/001_initial_schema.sql`. It creates the initial tables for users, settings, requests/comments, tasks, assets, inventory/movements, announcements, notifications, and activity history. It is repeatable for an initial install and does not drop or truncate existing data.
+For a new installation, import `officeflow-schema.sql`. It creates all 15 tables and is safe to run twice.
 
-For future releases, add a new numbered migration instead of editing a migration already shipped to customers. Back up the database before applying updates.
+`database/migrations/` holds the numbered, forward-only migrations that make up that combined file (`001_initial_schema.sql`, `002_office_resources.sql`). Apply only the newer files when upgrading an installation that already exists, so existing data is preserved. Back up the database before applying updates.
 
 ## Requirements planned for the app
 
@@ -47,7 +48,7 @@ These are initial targets, not a compatibility guarantee until the app is tested
 
 ## Running the app locally
 
-1. Create an empty MySQL/MariaDB database and import `database/migrations/001_initial_schema.sql`.
+1. Create an empty MySQL/MariaDB database and import `officeflow-schema.sql`.
 2. Copy `config/database.example.php` to `config/database.php` and enter the connection values.
 3. Serve the project directory (for example `php -S 127.0.0.1:8000`).
 4. Open the site: the first visit redirects to `install.php` until the first administrator exists.
