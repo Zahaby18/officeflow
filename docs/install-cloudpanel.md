@@ -30,10 +30,14 @@ Do **not** upload `config/database.php`; you will create it on the server in ste
 
 SFTP uses port 22. Create an SSH/SFTP user under the site's **SSH/FTP** tab and use that account, not root.
 
-## 3. Create the database
+## 3. Create the database and import the schema
 
 1. CloudPanel: **Databases → Add Database**. Set a database name, user, and a strong password.
-2. Import the schema with the site user over SSH (CloudPanel advises against phpMyAdmin for imports):
+2. On the same page, click **Manage** to open phpMyAdmin, log in as that database user, select the database, then **Import → Choose file → `001_initial_schema.sql` → Go**.
+
+That is enough for this project: the database is empty and the schema file is about 9 KB. CloudPanel warns against phpMyAdmin for export/import in general, because it can corrupt large or populated databases; that does not apply to importing a small schema into a brand-new empty database.
+
+The CLI route works too, if you prefer it:
 
 ```bash
 ssh <site-user>@<server-ip>
@@ -43,16 +47,17 @@ clpctl db:import --databaseName=<database-name> --file=001_initial_schema.sql
 
 Upload `database/migrations/001_initial_schema.sql` to `~/tmp/` first if it is not there.
 
-## 4. Create the config on the server
+## 4. Create the config
 
-On the server, from the project directory (`cd /home/<site-user>/htdocs/e-officeflow.azdevs.my.id`), copy the example and fill in the values from step 3:
+Copy `config/database.example.php` to `config/database.php` and enter the database name, user, and password from step 3. Do this on your own machine, then upload `config/database.php` with SFTP into the project's `config/` folder. Keep this file out of Git.
+
+You can also create it directly on the server if you prefer:
 
 ```bash
+cd /home/<site-user>/htdocs/e-officeflow.azdevs.my.id
 cp config/database.example.php config/database.php
 nano config/database.php
 ```
-
-Enter the database name, user, and password. Keep this file out of Git.
 
 ## 5. Point the web root at public/
 
