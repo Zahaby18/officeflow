@@ -2,6 +2,11 @@
 
 declare(strict_types=1);
 
+if (!defined('OFFICEFLOW_APP')) {
+    http_response_code(404);
+    exit;
+}
+
 final class Csrf
 {
     public static function token(): string

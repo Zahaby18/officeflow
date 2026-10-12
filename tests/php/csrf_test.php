@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+define('OFFICEFLOW_APP', true);
+
 require_once __DIR__ . '/../../app/Csrf.php';
 
 function expectCsrf(bool $condition, string $message): void

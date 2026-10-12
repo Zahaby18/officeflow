@@ -40,6 +40,17 @@
 .app-flash-error { background: #faefec; color: #a94f43; }
 .app-flash-info { background: #edf3f9; color: #456b8d; }
 .app-footer { margin: 0 36px 22px; padding-top: 0; }
+.app-search-form { display: flex; gap: 7px; align-items: center; }
+.app-search-form input { min-height: 37px; min-width: 180px; padding: 0 11px; border: 1px solid #e1e9e6; border-radius: 6px; font-size: 12px; }
+.app-records { margin-top: 17px; }
+.module-form { padding: 0 18px 17px; }
+.module-actions { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; }
+.module-actions form { margin: 0; }
+.inline-form { display: flex; gap: 5px; align-items: center; }
+.inline-form input[type="password"] { width: 130px; min-height: 32px; padding: 0 8px; border: 1px solid #e1e9e6; border-radius: 5px; font-size: 11px; }
+.text-danger { color: #b75f50; }
+.button.is-active-filter { background: #e4f2ee; color: var(--teal-dark); }
+.notification-count { position: absolute; top: 2px; right: 2px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px; background: #d87458; color: #fff; font-size: 9px; font-weight: 700; line-height: 16px; text-align: center; }
 .app-empty { padding: 34px 18px 39px; color: #758182; text-align: center; font-size: 12px; }
 .app-empty strong { display: block; margin-bottom: 6px; color: var(--ink); font: 700 15px var(--display); }
 .app-nav-soon { margin-left: auto; color: #789493; font-size: 9px; }

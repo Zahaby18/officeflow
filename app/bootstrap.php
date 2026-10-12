@@ -2,10 +2,25 @@
 
 declare(strict_types=1);
 
+if (!defined('OFFICEFLOW_APP')) {
+    http_response_code(404);
+    exit;
+}
+
 require_once __DIR__ . '/AuthService.php';
 require_once __DIR__ . '/InstallService.php';
-require_once __DIR__ . '/RequestService.php';
 require_once __DIR__ . '/Csrf.php';
+require_once __DIR__ . '/Schema.php';
+require_once __DIR__ . '/ActivityService.php';
+require_once __DIR__ . '/NotificationService.php';
+require_once __DIR__ . '/RequestService.php';
+require_once __DIR__ . '/TaskService.php';
+require_once __DIR__ . '/InventoryService.php';
+require_once __DIR__ . '/TeamService.php';
+require_once __DIR__ . '/SettingsService.php';
+require_once __DIR__ . '/ReportService.php';
+require_once __DIR__ . '/Modules.php';
+require_once __DIR__ . '/CrudService.php';
 
 ini_set('session.use_strict_mode', '1');
 ini_set('session.use_only_cookies', '1');

@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+define('OFFICEFLOW_APP', true);
+
 require_once __DIR__ . '/../../app/InstallService.php';
 
 function expectInstall(bool $condition, string $message): void

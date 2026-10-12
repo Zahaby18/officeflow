@@ -1,0 +1,21 @@
+# OfficeFlow — Apache hardening rules.
+#
+# Nginx ignores this file. On an Nginx host the PHP guard inside app/, config/,
+# and database/ still blocks direct access to those scripts; if your panel
+# exposes vhost editing, add an equivalent deny block (see docs/architecture.md).
+
+DirectoryIndex index.php index.html
+
+<IfModule mod_alias.c>
+  RedirectMatch 404 ^/(app|config|database|tests|docs)(/|$)
+</IfModule>
+
+<FilesMatch "\.(sql|md|log|json|lock|ini|dist)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>

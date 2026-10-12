@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+define('OFFICEFLOW_APP', true);
+
 require_once __DIR__ . '/../../app/RequestService.php';
 
 function expectRequest(bool $condition, string $message): void

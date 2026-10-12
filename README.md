@@ -4,7 +4,7 @@ OfficeFlow is planned as a self-hosted office operations app. Each customer inst
 
 ## Current status
 
-This repository contains the initial database migration, schema checks, architecture notes, a **static UI preview** at `public/preview.html`, and a working **PHP/MySQL app foundation**: first-time admin setup, login/logout with hardened sessions, CSRF-protected forms, a Home dashboard, and a Requests module with create + admin status transitions. Notifications, Tasks, Assets, Inventory, Team, and Settings are not implemented yet, so the repo is **not a sale-ready product**. Backups, an upgrade path, and the buyer ZIP still need to be built and tested.
+This repository contains the initial database migration, schema checks, architecture notes, a **static UI preview** at `preview.html`, and a working **PHP/MySQL app foundation**: first-time admin setup, login/logout with hardened sessions, CSRF-protected forms, a Home dashboard, and a Requests module with create + admin status transitions. Notifications, Tasks, Assets, Inventory, Team, and Settings are not implemented yet, so the repo is **not a sale-ready product**. Backups, an upgrade path, and the buyer ZIP still need to be built and tested.
 
 ## First release scope
 
@@ -13,24 +13,23 @@ The first usable release is intended to focus on Home, Requests, Tasks & Checkli
 ## Repository layout
 
 ```text
-app/                         PHP application services, bootstrap, and view partials
-app/views/                   shared header, footer, and icon sprite
+index.php                    authenticated Home dashboard
+requests.php                 Requests module (create + admin status update)
+install.php                  first-time admin setup
+login.php                    sign-in
+logout.php                   POST-only sign-out
+preview.html                 static UI preview (no database)
+assets/                      UI styles and preview interactions
+app/                         PHP services, bootstrap, and view partials
 config/database.example.php  safe configuration template
-config/database.php          local credentials; ignored by Git
+config/database.php          credentials created during setup; ignored by Git
 database/migrations/         forward-only database migrations
-public/index.php             authenticated Home dashboard
-public/requests.php          Requests module (create + admin status update)
-public/install.php           first-time admin setup
-public/login.php             sign-in
-public/logout.php            POST-only sign-out
-public/preview.html          static UI preview (no database)
-public/assets/               UI styles and preview interactions
 docs/                        architecture and deployment notes
 tests/test_*.py              schema and static UI checks
 tests/php/*_test.php         service-level integration checks (SQLite)
 ```
 
-The live document root should point to `public/`; keep `config/`, `database/`, `app/`, and `tests/` outside the public web root wherever the hosting allows it.
+The app is **drop-in**: upload the project contents straight into the site's web root (`public_html` on cPanel, the site directory on CloudPanel). No document-root or vhost change is required, because there is no separate `public/` folder. `app/`, `config/`, and `database/` carry a PHP guard and ship with `.htaccess` deny rules so they stay unreachable from the browser.
 
 ## Database
 
@@ -50,7 +49,7 @@ These are initial targets, not a compatibility guarantee until the app is tested
 
 1. Create an empty MySQL/MariaDB database and import `database/migrations/001_initial_schema.sql`.
 2. Copy `config/database.example.php` to `config/database.php` and enter the connection values.
-3. Serve the `public/` directory (for example `php -S 127.0.0.1:8000 -t public`).
+3. Serve the project directory (for example `php -S 127.0.0.1:8000`).
 4. Open the site: the first visit redirects to `install.php` until the first administrator exists.
 
 ## Tests

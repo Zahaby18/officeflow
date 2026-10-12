@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__) . '/app/bootstrap.php';
+define('OFFICEFLOW_APP', true);
+
+require_once __DIR__ . '/app/bootstrap.php';
 
 if (!officeflow_verify_post()) {
     http_response_code(405);

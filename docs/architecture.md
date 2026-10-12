@@ -4,7 +4,7 @@
 
 Each buyer gets an independent installation on their own hosting and database. A single installation serves one office; it is not a multi-tenant SaaS. All team devices use the same HTTPS URL and authenticate against the same database.
 
-Keep the application code and configuration outside the public document root. Expose only `public/`. If a hosting panel cannot set the document root to the project’s `public/` directory, place the non-public files outside `public_html` and put only the contents of `public/` in the site document root.
+The app is drop-in and does not need a document-root change. Keep the code and data folders unreachable by leaving the shipped `.htaccess` deny rules in place on Apache, and by adding an equivalent `location` deny block on Nginx if the panel exposes vhost editing.
 
 ## Initial application shape
 

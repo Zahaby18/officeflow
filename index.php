@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__) . '/app/bootstrap.php';
+define('OFFICEFLOW_APP', true);
+
+require_once __DIR__ . '/app/bootstrap.php';
 
 try {
     $pdo = officeflow_db();
@@ -10,7 +12,7 @@ try {
 } catch (Throwable $exception) {
     error_log('OfficeFlow home preflight failed: ' . $exception->getMessage());
     http_response_code(503);
-    $configExists = is_file(dirname(__DIR__) . '/config/database.php');
+    $configExists = is_file(__DIR__ . '/config/database.php');
     $title = $configExists ? 'Database setup needs attention' : 'Connect the OfficeFlow database';
     $detail = $configExists
         ? 'Check the database connection and confirm that database/migrations/001_initial_schema.sql has been imported.'
@@ -31,7 +33,7 @@ $currentPage = 'Home';
 $firstName = preg_split('/\s+/', trim($user['name']))[0] ?? $user['name'];
 $hour = (int) date('G');
 $greeting = $hour < 12 ? 'Good morning' : ($hour < 18 ? 'Good afternoon' : 'Good evening');
-require dirname(__DIR__) . '/app/views/app-header.php';
+require __DIR__ . '/app/views/app-header.php';
 ?>
 <section class="app-page-heading">
   <div><p class="eyebrow"><?= officeflow_e(strtoupper(date('l · j F Y'))) ?></p><h1><?= officeflow_e($greeting) ?>, <?= officeflow_e($firstName) ?></h1><p>Here’s what needs your attention around the office.</p></div>
@@ -60,4 +62,4 @@ require dirname(__DIR__) . '/app/views/app-header.php';
     </tbody></table></div>
   <?php endif; ?>
 </section>
-<?php require dirname(__DIR__) . '/app/views/app-footer.php'; ?>
+<?php require __DIR__ . '/app/views/app-footer.php'; ?>

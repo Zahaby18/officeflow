@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+define('OFFICEFLOW_APP', true);
+
 require_once __DIR__ . '/../../app/AuthService.php';
 
 function expect(bool $condition, string $message): void

@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__) . '/app/bootstrap.php';
+define('OFFICEFLOW_APP', true);
+
+require_once __DIR__ . '/app/bootstrap.php';
 
 try {
     $pdo = officeflow_db();
@@ -52,7 +54,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
 
 $requests = RequestService::list($pdo, 200);
 $currentPage = 'Requests';
-require dirname(__DIR__) . '/app/views/app-header.php';
+require __DIR__ . '/app/views/app-header.php';
 ?>
 <section class="app-page-heading">
   <div><p class="eyebrow">OFFICE WORKSPACE</p><h1>Requests</h1><p>Capture office needs and keep every request moving to the right person.</p></div>
@@ -95,4 +97,4 @@ require dirname(__DIR__) . '/app/views/app-header.php';
     </tbody></table></div>
   <?php endif; ?>
 </section>
-<?php require dirname(__DIR__) . '/app/views/app-footer.php'; ?>
+<?php require __DIR__ . '/app/views/app-footer.php'; ?>

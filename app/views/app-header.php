@@ -2,9 +2,34 @@
 
 declare(strict_types=1);
 
+if (!defined('OFFICEFLOW_APP')) {
+    http_response_code(404);
+    exit;
+}
+
 $officeName = $officeName ?? 'Office workspace';
 $currentPage = $currentPage ?? 'Home';
-$user = $user ?? ['name' => 'Team member', 'role' => 'staff'];
+$user = $user ?? ['name' => 'Team member', 'role' => 'staff', 'id' => 0];
+
+if (!isset($unreadNotifications)) {
+    try {
+        $unreadNotifications = NotificationService::unreadCount(officeflow_db(), (int) $user['id']);
+    } catch (Throwable) {
+        $unreadNotifications = 0;
+    }
+}
+
+$navigation = Modules::navigation();
+$activeSlug = $activeSlug ?? '';
+if ($activeSlug === '') {
+    foreach ($navigation as $slug => $item) {
+        if ($item['label'] === $currentPage) {
+            $activeSlug = $slug;
+            break;
+        }
+    }
+}
+$initials = strtoupper(mb_substr(trim($user['name']), 0, 1, 'UTF-8'));
 ?>
 <!doctype html>
 <html lang="en">
@@ -28,26 +53,22 @@ $user = $user ?? ['name' => 'Team member', 'role' => 'staff'];
       <span><strong>OfficeFlow</strong><small><?= officeflow_e($officeName) ?></small></span>
     </a>
     <nav class="navigation">
-      <p class="nav-heading">Workspace</p>
-      <a class="nav-link <?= $currentPage === 'Home' ? 'is-active' : '' ?>" href="/"><svg class="icon"><use href="#i-home"/></svg><span>Home</span></a>
-      <a class="nav-link <?= $currentPage === 'Requests' ? 'is-active' : '' ?>" href="/requests.php"><svg class="icon"><use href="#i-inbox"/></svg><span>Requests</span></a>
-      <button class="nav-link" type="button" disabled aria-disabled="true" title="Module planned for a later build"><svg class="icon"><use href="#i-checklist"/></svg><span>Tasks &amp; Checklists</span><span class="app-nav-soon">Soon</span></button>
-      <button class="nav-link" type="button" disabled aria-disabled="true" title="Module planned for a later build"><svg class="icon"><use href="#i-megaphone"/></svg><span>Announcements</span><span class="app-nav-soon">Soon</span></button>
-      <p class="nav-heading">Office resources</p>
-      <button class="nav-link" type="button" disabled aria-disabled="true" title="Module planned for a later build"><svg class="icon"><use href="#i-box"/></svg><span>Assets</span><span class="app-nav-soon">Soon</span></button>
-      <button class="nav-link" type="button" disabled aria-disabled="true" title="Module planned for a later build"><svg class="icon"><use href="#i-package"/></svg><span>Inventory</span><span class="app-nav-soon">Soon</span></button>
-      <button class="nav-link" type="button" disabled aria-disabled="true" title="Module planned for a later build"><svg class="icon"><use href="#i-tool"/></svg><span>Maintenance</span><span class="app-nav-soon">Soon</span></button>
-      <button class="nav-link" type="button" disabled aria-disabled="true" title="Module planned for a later build"><svg class="icon"><use href="#i-building"/></svg><span>Rooms &amp; Facilities</span><span class="app-nav-soon">Soon</span></button>
-      <button class="nav-link" type="button" disabled aria-disabled="true" title="Module planned for a later build"><svg class="icon"><use href="#i-users"/></svg><span>Vendors</span><span class="app-nav-soon">Soon</span></button>
-      <button class="nav-link" type="button" disabled aria-disabled="true" title="Module planned for a later build"><svg class="icon"><use href="#i-file"/></svg><span>Documents &amp; SOPs</span><span class="app-nav-soon">Soon</span></button>
-      <p class="nav-heading">Management</p>
-      <button class="nav-link" type="button" disabled aria-disabled="true" title="Module planned for a later build"><svg class="icon"><use href="#i-users"/></svg><span>Team</span><span class="app-nav-soon">Soon</span></button>
-      <button class="nav-link" type="button" disabled aria-disabled="true" title="Module planned for a later build"><svg class="icon"><use href="#i-chart"/></svg><span>Reports</span><span class="app-nav-soon">Soon</span></button>
-      <button class="nav-link" type="button" disabled aria-disabled="true" title="Module planned for a later build"><svg class="icon"><use href="#i-clock"/></svg><span>Activity log</span><span class="app-nav-soon">Soon</span></button>
+      <?php foreach (Modules::SECTIONS as $sectionKey => $section): ?>
+        <p class="nav-heading"><?= officeflow_e($section['label']) ?></p>
+        <?php foreach ($section['items'] as $itemSlug): ?>
+          <?php $item = $navigation[$itemSlug] ?? null; if ($item === null) { continue; } ?>
+          <a class="nav-link <?= $activeSlug === $itemSlug ? 'is-active' : '' ?>" href="<?= officeflow_e($item['href']) ?>">
+            <svg class="icon"><use href="#<?= officeflow_e($item['icon']) ?>"/></svg><span><?= officeflow_e($item['label']) ?></span>
+          </a>
+        <?php endforeach; ?>
+      <?php endforeach; ?>
+      <?php $settingsItem = $navigation['settings']; ?>
+      <a class="nav-link settings-link <?= $activeSlug === 'settings' ? 'is-active' : '' ?>" href="<?= officeflow_e($settingsItem['href']) ?>">
+        <svg class="icon"><use href="#<?= officeflow_e($settingsItem['icon']) ?>"/></svg><span><?= officeflow_e($settingsItem['label']) ?></span>
+      </a>
     </nav>
-    <button class="nav-link settings-link" type="button" disabled aria-disabled="true" title="Module planned for a later build"><svg class="icon"><use href="#i-settings"/></svg><span>Settings</span><span class="app-nav-soon">Soon</span></button>
     <div class="sidebar-user">
-      <span class="avatar"><?= officeflow_e(strtoupper(mb_substr($user['name'], 0, 1, 'UTF-8'))) ?></span>
+      <span class="avatar"><?= officeflow_e($initials) ?></span>
       <span class="user-copy"><strong><?= officeflow_e($user['name']) ?></strong><small><?= officeflow_e(ucfirst($user['role'])) ?></small></span>
       <form class="app-user-form" method="post" action="/logout.php">
         <?= officeflow_csrf_input() ?>
@@ -59,8 +80,11 @@ $user = $user ?? ['name' => 'Team member', 'role' => 'staff'];
     <header class="topbar">
       <div class="breadcrumb"><span><?= officeflow_e($officeName) ?></span><span class="slash">/</span><strong><?= officeflow_e($currentPage) ?></strong></div>
       <div class="topbar-actions">
-        <button class="icon-button" type="button" aria-label="Notifications are planned, not active yet" disabled title="Notifications are planned for a later build"><svg class="icon"><use href="#i-bell"/></svg></button>
-        <span class="top-profile" aria-label="Signed in as <?= officeflow_e($user['name']) ?>"><span class="avatar"><?= officeflow_e(strtoupper(mb_substr($user['name'], 0, 1, 'UTF-8'))) ?></span></span>
+        <a class="icon-button notification-button" href="/notifications.php" aria-label="Notifications<?= $unreadNotifications > 0 ? ', ' . (int) $unreadNotifications . ' unread' : '' ?>">
+          <svg class="icon"><use href="#i-bell"/></svg>
+          <?php if ($unreadNotifications > 0): ?><span class="notification-count"><?= $unreadNotifications > 99 ? '99+' : (int) $unreadNotifications ?></span><?php endif; ?>
+        </a>
+        <span class="top-profile" aria-label="Signed in as <?= officeflow_e($user['name']) ?>"><span class="avatar"><?= officeflow_e($initials) ?></span></span>
       </div>
     </header>
     <section class="app-content">
