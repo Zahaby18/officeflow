@@ -20,9 +20,14 @@ OfficeFlow is drop-in. Upload the folder contents to the web root and open the s
 
 2. **Create the database.** In your panel, add a MySQL database and note the **name**, **user**, and **password**.
 
-3. **Import the schema.** Open phpMyAdmin for that database, choose **Import**, upload `officeflow-schema.sql`, and run it. That one file creates all 15 tables.
+3. **Create the schema.** Two ways, both fine:
+
+   - **Let OfficeFlow do it.** Skip to step 4, then open the site. If the tables are missing it shows a **Create the tables** button that builds all 15 tables for you. This is the recommended path because nothing extra stays on the server.
+   - **Or import it yourself.** Open phpMyAdmin for that database, choose **Import**, upload `officeflow-schema.sql`, and run it. That one file creates all 15 tables.
 
    Tiny databases like this are safe in phpMyAdmin. The general warning against importing with phpMyAdmin is about large or already-populated databases, which does not apply here.
+
+   If you use the import route, delete `officeflow-schema.sql` from the server afterwards. On Nginx hosts a `.sql` file is served as plain text, and `.htaccess` does not apply there.
 
 4. **Create the config.** Copy `config/database.example.php` to `config/database.php` and fill in the values from step 2. Upload it. Do not put it in Git and do not share it.
 

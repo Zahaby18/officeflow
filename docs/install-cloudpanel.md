@@ -44,12 +44,12 @@ Do **not** upload `config/database.php`; create it on the server in step 4.
 
 SFTP uses port 22. Create an SSH/SFTP user under the site's **SSH/FTP** tab and use that account, not root.
 
-## 3. Create the database and import the schema
+## 3. Create the database and the schema
 
 1. CloudPanel: **Databases → Add Database**. Set a database name, user, and a strong password.
-2. On the same page, click **Manage** to open phpMyAdmin, log in as that database user, select the database, then **Import → Choose file → `officeflow-schema.sql` → Go**.
+2. That is all you must do here. Once `config/database.php` exists (step 4), opening the site shows a **Create the tables** button that builds all 15 tables. This keeps `officeflow-schema.sql` off the server, which matters because Nginx serves a `.sql` file as plain text and ignores `.htaccess`.
 
-That one file creates all 15 tables. It is about 13 KB and safe to run twice.
+If you would rather import it by hand: on the Databases page click **Manage** to open phpMyAdmin, log in as that database user, select the database, then **Import → Choose file → `officeflow-schema.sql` → Go**. That one file creates all 15 tables and is about 13 KB. **Delete the file from the server afterwards.**
 
 CloudPanel warns against phpMyAdmin for export/import in general, because it can corrupt large or already-populated databases. That warning does not apply to importing a small schema into a brand-new empty database.
 
@@ -61,7 +61,7 @@ cd ~/tmp/
 clpctl db:import --databaseName=<database-name> --file=officeflow-schema.sql
 ```
 
-Upload `officeflow-schema.sql` to `~/tmp/` first if it is not there.
+Upload `officeflow-schema.sql` to `~/tmp/` first if it is not there, and remove it when you are done.
 
 ## 4. Create the config
 
