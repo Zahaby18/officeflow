@@ -217,7 +217,14 @@ require __DIR__ . '/app/views/app-header.php';
       <?php foreach ($records as $record): ?>
         <tr>
           <?php foreach ($module['columns'] as $column => $label): ?>
-            <td><?= officeflow_e(officeflow_display_value($module, $column, $record[$column] ?? null)) ?></td>
+            <?php if ($column === $module['title_field']): ?>
+              <?php $summary = trim((string) ($record[$module['summary_field']] ?? '')); ?>
+              <td><span class="app-request-title"><a class="row-link" href="/record.php?m=<?= officeflow_e($slug) ?>&amp;id=<?= (int) $record['id'] ?>"><strong><?= officeflow_e(officeflow_display_value($module, $column, $record[$column] ?? null)) ?></strong></a><?php if ($summary !== ''): ?><small class="row-detail"><?= officeflow_e(mb_strimwidth($summary, 0, 130, '…', 'UTF-8')) ?></small><?php endif; ?></span></td>
+            <?php elseif (($module['fields'][$column]['type'] ?? '') === 'url' && trim((string) ($record[$column] ?? '')) !== ''): ?>
+              <td><a class="text-button" href="<?= officeflow_e((string) $record[$column]) ?>" target="_blank" rel="noopener noreferrer">Open link →</a></td>
+            <?php else: ?>
+              <td><?= officeflow_e(officeflow_display_value($module, $column, $record[$column] ?? null)) ?></td>
+            <?php endif; ?>
           <?php endforeach; ?>
           <?php if ($isAdmin): ?>
             <td class="module-actions">

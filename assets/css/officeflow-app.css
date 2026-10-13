@@ -64,6 +64,9 @@
 .inline-form input[type="password"] { width: 130px; min-height: 32px; padding: 0 8px; border: 1px solid #e1e9e6; border-radius: 5px; font-size: 11px; }
 .text-danger { color: #b75f50; }
 .button.is-active-filter { background: #e4f2ee; color: var(--teal-dark); }
+.button-danger { background: #fdf0ed; color: #a94f43; }
+.button-danger:hover { background: #f8e2dd; }
+.detail-muted { color: #9aa5a3; font-size: 11px; }
 .notification-count { position: absolute; top: 2px; right: 2px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px; background: #d87458; color: #fff; font-size: 9px; font-weight: 700; line-height: 16px; text-align: center; }
 .app-empty { padding: 34px 18px 39px; color: #758182; text-align: center; font-size: 12px; }
 .app-empty strong { display: block; margin-bottom: 6px; color: var(--ink); font: 700 15px var(--display); }

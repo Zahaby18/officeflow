@@ -109,7 +109,7 @@ require __DIR__ . '/app/views/app-header.php';
           $overdue = $task['due_at'] !== null && $task['status'] !== 'completed' && strtotime((string) $task['due_at']) < time();
         ?>
         <tr>
-          <td><span class="app-request-title"><strong><?= officeflow_e($task['title']) ?></strong><small><?= officeflow_e(ucfirst($task['recurrence'] === 'none' ? 'one-time' : $task['recurrence'] . ' · recurring')) ?></small></span></td>
+          <td><span class="app-request-title"><strong><?= officeflow_e($task['title']) ?></strong><small><?= officeflow_e(ucfirst($task['recurrence'] === 'none' ? 'one-time' : $task['recurrence'] . ' · recurring')) ?></small><?php if (trim((string) ($task['details'] ?? '')) !== ''): ?><small class="row-detail"><?= officeflow_e(mb_strimwidth(trim((string) $task['details']), 0, 130, '…', 'UTF-8')) ?></small><?php endif; ?></span></td>
           <td><?= officeflow_e($task['category']) ?></td>
           <td><?= officeflow_e($task['assignee_name'] ?? 'Unassigned') ?></td>
           <td><?= $task['due_at'] === null ? '—' : officeflow_e(date('M j, Y H:i', strtotime((string) $task['due_at']))) ?><?= $overdue ? ' <span class="app-priority app-priority-high">overdue</span>' : '' ?></td>
