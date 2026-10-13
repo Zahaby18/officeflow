@@ -31,19 +31,29 @@ try {
     );
 }
 
-try {
-    $isInstalled = InstallService::isInstalled($pdo);
-} catch (PDOException $exception) {
-    error_log('OfficeFlow schema check failed: ' . $exception->getMessage());
-    installationProblem(
-        'Import the database schema first',
-        'The database is reachable, but the OfficeFlow tables are missing. Import officeflow-schema.sql into the empty OfficeFlow database, then reload this page.',
-        'clpctl db:import --databaseName=YOUR_DATABASE --file=/home/YOUR_SITE_USER/tmp/officeflow-schema.sql'
-    );
-}
+$needsSchema = !InstallService::schemaExists($pdo);
+$isInstalled = !$needsSchema && InstallService::isInstalled($pdo);
 
 if ($isInstalled) {
     officeflow_redirect('/login.php');
+}
+
+$schemaMessage = '';
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['action'] ?? '') === 'create_schema') {
+    if (!officeflow_verify_post()) {
+        $schemaMessage = 'This form expired. Reload the page and try again.';
+    } else {
+        try {
+            foreach (Schema::statements() as $statement) {
+                $pdo->exec($statement);
+            }
+            ActivityService::record($pdo, null, 'created', 'database', null, 'Created the OfficeFlow database tables');
+            officeflow_redirect('/install.php');
+        } catch (Throwable $exception) {
+            error_log('OfficeFlow schema creation failed: ' . $exception->getMessage());
+            $schemaMessage = 'The tables could not be created. Check that the database user is allowed to create tables, then try again.';
+        }
+    }
 }
 
 $errors = [];
@@ -99,6 +109,19 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     <span class="auth-orbit" aria-hidden="true"></span><small class="auth-brand-foot">Your office data stays in your hosting account.</small>
   </aside>
   <main class="auth-main">
+    <?php if ($needsSchema): ?>
+    <section class="auth-card" aria-labelledby="setupTitle">
+      <p class="eyebrow">OFFICEFLOW INSTALLATION</p><h2 id="setupTitle">Create the database tables</h2>
+      <p class="auth-card-intro">The database connection works, but the OfficeFlow tables do not exist yet. Let OfficeFlow create all 15 tables, then continue to the administrator account.</p>
+      <?php if ($schemaMessage !== ''): ?><div class="app-flash app-flash-error" role="alert"><?= officeflow_e($schemaMessage) ?></div><?php endif; ?>
+      <form method="post" action="/install.php">
+        <?= officeflow_csrf_input() ?>
+        <input type="hidden" name="action" value="create_schema">
+        <div class="app-form-actions"><button class="button button-primary" type="submit">Create the tables</button></div>
+      </form>
+      <p class="auth-note">Prefer phpMyAdmin? Import <code>officeflow-schema.sql</code> into this database and reload this page instead. This button exists so that file never has to stay on the server.</p>
+    </section>
+    <?php else: ?>
     <section class="auth-card" aria-labelledby="setupTitle">
       <p class="eyebrow">OFFICEFLOW INSTALLATION</p><h2 id="setupTitle">Create your admin account</h2><p class="auth-card-intro">This becomes the first administrator for this OfficeFlow installation.</p>
       <?php if ($errors !== []): ?><div class="app-flash app-flash-error" role="alert"><?= officeflow_e(implode(' ', $errors)) ?></div><?php endif; ?>
@@ -112,6 +135,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         <div class="app-form-actions"><button class="button button-primary" type="submit">Create admin account</button></div>
       </form>
     </section>
+    <?php endif; ?>
   </main>
 </div>
 </body>

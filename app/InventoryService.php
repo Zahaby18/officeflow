@@ -18,10 +18,15 @@ final class InventoryService
         $where = '';
         $search = trim($search);
         if ($search !== '') {
-            $where = ' WHERE (name LIKE :search OR sku LIKE :search OR category LIKE :search)';
-            $params['search'] = '%' . $search . '%';
+            // Native MySQL prepares reject a repeated named placeholder, so each
+            // LIKE gets its own name.
+            $where = ' WHERE (name LIKE :search_name OR sku LIKE :search_sku OR category LIKE :search_category)';
+            $term = '%' . $search . '%';
+            $params['search_name'] = $term;
+            $params['search_sku'] = $term;
+            $params['search_category'] = $term;
         }
-        $statement = $pdo->prepare('SELECT * FROM inventory_items' . $where . ' ORDER BY name ASC LIMIT ' . $limit);
+        $statement = $pdo->prepare('SELECT * FROM inventory_items' . $where . ' ORDER BY name ASC LIMIT ' . (int) $limit);
         $statement->execute($params);
         return $statement->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -129,7 +134,7 @@ final class InventoryService
              LEFT JOIN users u ON u.id = m.created_by
              WHERE m.item_id = :item_id
              ORDER BY m.created_at DESC, m.id DESC
-             LIMIT ' . $limit
+             LIMIT ' . (int) $limit
         );
         $statement->execute(['item_id' => $itemId]);
         return $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -145,7 +150,7 @@ final class InventoryService
              INNER JOIN inventory_items i ON i.id = m.item_id
              LEFT JOIN users u ON u.id = m.created_by
              ORDER BY m.created_at DESC, m.id DESC
-             LIMIT ' . $limit
+             LIMIT ' . (int) $limit
         );
         $statement->execute();
         return $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -166,7 +171,7 @@ final class InventoryService
              FROM inventory_items
              WHERE quantity <= reorder_level
              ORDER BY (quantity - reorder_level) ASC, name ASC
-             LIMIT ' . $limit
+             LIMIT ' . (int) $limit
         );
         $statement->execute();
         return $statement->fetchAll(PDO::FETCH_ASSOC);

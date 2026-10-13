@@ -69,7 +69,7 @@ final class TaskService
             $sql .= ' WHERE t.status = :status';
             $params['status'] = $status;
         }
-        $sql .= ' ORDER BY (t.status IN (\'open\',\'in_progress\')) DESC, t.due_at IS NULL, t.due_at ASC, t.id DESC LIMIT ' . $limit;
+        $sql .= ' ORDER BY (t.status IN (\'open\',\'in_progress\')) DESC, t.due_at IS NULL, t.due_at ASC, t.id DESC LIMIT ' . (int) $limit;
 
         $statement = $pdo->prepare($sql);
         $statement->execute($params);

@@ -9,8 +9,28 @@ if (!defined('OFFICEFLOW_APP')) {
 
 final class InstallService
 {
+    /** True when the OfficeFlow tables exist at all. */
+    public static function schemaExists(PDO $pdo): bool
+    {
+        try {
+            $pdo->query('SELECT 1 FROM users LIMIT 1');
+            return true;
+        } catch (PDOException $exception) {
+            // Table missing: the schema has not been created yet.
+            return false;
+        }
+    }
+
+    /**
+     * True when an administrator already exists. Returns false instead of throwing
+     * when the tables are missing, so every page sends the visitor to the setup
+     * screen rather than showing a 503.
+     */
     public static function isInstalled(PDO $pdo): bool
     {
+        if (!self::schemaExists($pdo)) {
+            return false;
+        }
         return (bool) $pdo->query('SELECT 1 FROM users LIMIT 1')->fetchColumn();
     }
 

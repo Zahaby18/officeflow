@@ -9,7 +9,7 @@ require_once __DIR__ . '/app/bootstrap.php';
 /** Render one input for a module field. */
 function officeflow_field_input(array $field, string $name, mixed $value, array $referenceOptions = []): string
 {
-    $id = 'field-' . $name;
+    $id = 'field-' . preg_replace('/[^a-z0-9_]/i', '', $name);
     $required = ($field['required'] ?? false) === true ? ' required' : '';
     $label = officeflow_e($field['label']);
 
