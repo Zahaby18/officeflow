@@ -59,6 +59,26 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
 $summary = TaskService::summary($pdo);
 $tasks = TaskService::list($pdo, $filter);
 $assignees = TaskService::assignableUsers($pdo);
+
+$taskModalData = [];
+foreach ($tasks as $task) {
+    $taskModalData[(int) $task['id']] = [
+        'title' => (string) $task['title'],
+        'kind' => 'task',
+        'fields' => [
+            ['label' => 'Details', 'type' => 'textarea', 'text' => '', 'raw' => (string) ($task['details'] ?? '')],
+            ['label' => 'Category', 'type' => 'text', 'text' => (string) $task['category'], 'raw' => (string) $task['category']],
+            ['label' => 'Repeats', 'type' => 'text', 'text' => ucfirst((string) $task['recurrence']), 'raw' => ucfirst((string) $task['recurrence'])],
+            ['label' => 'Assignee', 'type' => 'text', 'text' => (string) ($task['assignee_name'] ?? 'Unassigned'), 'raw' => (string) ($task['assignee_name'] ?? 'Unassigned')],
+            ['label' => 'Due', 'type' => 'text', 'text' => $task['due_at'] === null ? 'No due date' : date('M j, Y H:i', strtotime((string) $task['due_at'])), 'raw' => $task['due_at'] === null ? '' : date('M j, Y H:i', strtotime((string) $task['due_at']))],
+            ['label' => 'Status', 'type' => 'text', 'text' => ucwords(str_replace('_', ' ', (string) $task['status'])), 'raw' => ucwords(str_replace('_', ' ', (string) $task['status']))],
+            ['label' => 'Created by', 'type' => 'text', 'text' => (string) ($task['creator_name'] ?? '—'), 'raw' => (string) ($task['creator_name'] ?? '')],
+            ['label' => 'Created', 'type' => 'text', 'text' => date('M j, Y H:i', strtotime((string) $task['created_at'])), 'raw' => date('M j, Y H:i', strtotime((string) $task['created_at']))],
+        ],
+        'editUrl' => '',
+    ];
+}
+
 $currentPage = 'Tasks & Checklists';
 require __DIR__ . '/app/views/app-header.php';
 ?>
@@ -109,7 +129,7 @@ require __DIR__ . '/app/views/app-header.php';
           $overdue = $task['due_at'] !== null && $task['status'] !== 'completed' && strtotime((string) $task['due_at']) < time();
         ?>
         <tr>
-          <td><span class="app-request-title"><strong><?= officeflow_e($task['title']) ?></strong><small><?= officeflow_e(ucfirst($task['recurrence'] === 'none' ? 'one-time' : $task['recurrence'] . ' · recurring')) ?></small><?php if (trim((string) ($task['details'] ?? '')) !== ''): ?><small class="row-detail"><?= officeflow_e(mb_strimwidth(trim((string) $task['details']), 0, 130, '…', 'UTF-8')) ?></small><?php endif; ?></span></td>
+          <td><span class="app-request-title"><button class="row-open" type="button" data-record="<?= (int) $task['id'] ?>" aria-label="View task details"><strong><?= officeflow_e($task['title']) ?></strong></button><small><?= officeflow_e(ucfirst($task['recurrence'] === 'none' ? 'one-time' : $task['recurrence'] . ' · recurring')) ?></small><?php if (trim((string) ($task['details'] ?? '')) !== ''): ?><small class="row-detail"><?= officeflow_e(mb_strimwidth(trim((string) $task['details']), 0, 130, '…', 'UTF-8')) ?></small><?php endif; ?></span></td>
           <td><?= officeflow_e($task['category']) ?></td>
           <td><?= officeflow_e($task['assignee_name'] ?? 'Unassigned') ?></td>
           <td><?= $task['due_at'] === null ? '—' : officeflow_e(date('M j, Y H:i', strtotime((string) $task['due_at']))) ?><?= $overdue ? ' <span class="app-priority app-priority-high">overdue</span>' : '' ?></td>
@@ -138,4 +158,17 @@ require __DIR__ . '/app/views/app-header.php';
     </table></div>
   <?php endif; ?>
 </section>
+
+<script type="application/json" id="record-data"><?= json_encode($taskModalData, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?></script>
+<div class="record-modal-backdrop" id="recordModal" hidden>
+  <section class="record-modal" role="dialog" aria-modal="true" aria-labelledby="recordModalTitle">
+    <header class="record-modal-head">
+      <div><p class="eyebrow" id="recordModalKind"></p><h2 id="recordModalTitle"></h2></div>
+      <button class="icon-button" type="button" data-modal-close aria-label="Close details"><svg class="icon"><use href="#i-close"/></svg></button>
+    </header>
+    <div class="record-modal-body" id="recordModalBody"></div>
+    <footer class="record-modal-foot" id="recordModalFoot"></footer>
+  </section>
+</div>
+<script src="<?= officeflow_e(officeflow_asset('js/record-modal.js')) ?>" defer></script>
 <?php require __DIR__ . '/app/views/app-footer.php'; ?>

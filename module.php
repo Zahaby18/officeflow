@@ -176,6 +176,28 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
 
 $records = CrudService::list($pdo, $module, $search);
 $editing = ($editId !== null && $isAdmin) ? CrudService::find($pdo, $module, $editId) : null;
+
+// Everything the popup needs, so opening a record costs no extra request.
+$modalData = [];
+foreach ($records as $record) {
+    $fields = [];
+    foreach ($module['fields'] as $column => $field) {
+        $raw = $record[$column] ?? null;
+        $fields[] = [
+            'label' => $field['label'],
+            'type' => $field['type'],
+            'text' => officeflow_display_value($module, $column, $raw),
+            'raw' => $raw === null ? '' : (string) $raw,
+        ];
+    }
+    $modalData[(int) $record['id']] = [
+        'title' => (string) ($record[$module['title_field']] ?? ('#' . $record['id'])),
+        'kind' => $module['singular'],
+        'fields' => $fields,
+        'editUrl' => $isAdmin ? '/module.php?m=' . urlencode($slug) . '&edit=' . (int) $record['id'] : '',
+    ];
+}
+
 $currentPage = $module['label'];
 require __DIR__ . '/app/views/app-header.php';
 ?>
@@ -219,9 +241,7 @@ require __DIR__ . '/app/views/app-header.php';
           <?php foreach ($module['columns'] as $column => $label): ?>
             <?php if ($column === $module['title_field']): ?>
               <?php $summary = trim((string) ($record[$module['summary_field']] ?? '')); ?>
-              <td><span class="app-request-title"><a class="row-link" href="/record.php?m=<?= officeflow_e($slug) ?>&amp;id=<?= (int) $record['id'] ?>"><strong><?= officeflow_e(officeflow_display_value($module, $column, $record[$column] ?? null)) ?></strong></a><?php if ($summary !== ''): ?><small class="row-detail"><?= officeflow_e(mb_strimwidth($summary, 0, 130, '…', 'UTF-8')) ?></small><?php endif; ?></span></td>
-            <?php elseif (($module['fields'][$column]['type'] ?? '') === 'url' && trim((string) ($record[$column] ?? '')) !== ''): ?>
-              <td><a class="text-button" href="<?= officeflow_e((string) $record[$column]) ?>" target="_blank" rel="noopener noreferrer">Open link →</a></td>
+              <td><span class="app-request-title"><button class="row-open" type="button" data-record="<?= (int) $record['id'] ?>" aria-label="View <?= officeflow_e($module['singular']) ?> details"><strong><?= officeflow_e(officeflow_display_value($module, $column, $record[$column] ?? null)) ?></strong></button><?php if ($summary !== ''): ?><small class="row-detail"><?= officeflow_e(mb_strimwidth($summary, 0, 130, '…', 'UTF-8')) ?></small><?php endif; ?></span></td>
             <?php else: ?>
               <td><?= officeflow_e(officeflow_display_value($module, $column, $record[$column] ?? null)) ?></td>
             <?php endif; ?>
@@ -243,4 +263,17 @@ require __DIR__ . '/app/views/app-header.php';
     </table></div>
   <?php endif; ?>
 </section>
+
+<script type="application/json" id="record-data"><?= json_encode($modalData, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?></script>
+<div class="record-modal-backdrop" id="recordModal" hidden>
+  <section class="record-modal" role="dialog" aria-modal="true" aria-labelledby="recordModalTitle">
+    <header class="record-modal-head">
+      <div><p class="eyebrow" id="recordModalKind"></p><h2 id="recordModalTitle"></h2></div>
+      <button class="icon-button" type="button" data-modal-close aria-label="Close details"><svg class="icon"><use href="#i-close"/></svg></button>
+    </header>
+    <div class="record-modal-body" id="recordModalBody"></div>
+    <footer class="record-modal-foot" id="recordModalFoot"></footer>
+  </section>
+</div>
+<script src="<?= officeflow_e(officeflow_asset('js/record-modal.js')) ?>" defer></script>
 <?php require __DIR__ . '/app/views/app-footer.php'; ?>

@@ -67,6 +67,20 @@
 .button-danger { background: #fdf0ed; color: #a94f43; }
 .button-danger:hover { background: #f8e2dd; }
 .detail-muted { color: #9aa5a3; font-size: 11px; }
+.record-modal-backdrop { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; padding: 20px; background: rgb(16 39 39 / 48%); }
+.record-modal { width: min(620px, 100%); max-height: min(84vh, 780px); display: flex; flex-direction: column; border-radius: 10px; background: #fff; box-shadow: 0 22px 70px rgb(17 43 43 / 26%); }
+.record-modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding: 20px 20px 14px; }
+.record-modal-head .eyebrow { margin-bottom: 5px; }
+.record-modal-head h2 { margin: 0; font: 700 19px/1.25 var(--display); letter-spacing: -.4px; }
+.record-modal-body { overflow-y: auto; padding: 0 20px; }
+.record-row { display: grid; grid-template-columns: 165px minmax(0, 1fr); gap: 12px; padding: 11px 0; border-top: 1px solid var(--line); }
+.record-row-label { color: #7d8a89; font-size: 10px; font-weight: 700; padding-top: 2px; }
+.record-row-value { color: #344747; font-size: 12px; line-height: 1.7; min-width: 0; word-break: break-word; }
+.record-modal-foot { padding: 16px 20px 20px; display: flex; justify-content: flex-end; gap: 8px; }
+.record-modal-foot:empty { display: none; }
+.row-open { border: 0; background: transparent; padding: 0; color: inherit; text-align: left; cursor: pointer; font: inherit; }
+.row-open:hover strong { color: var(--teal-dark); text-decoration: underline; }
+@media (max-width: 560px) { .record-row { grid-template-columns: 1fr; gap: 4px; } }
 .notification-count { position: absolute; top: 2px; right: 2px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px; background: #d87458; color: #fff; font-size: 9px; font-weight: 700; line-height: 16px; text-align: center; }
 .app-empty { padding: 34px 18px 39px; color: #758182; text-align: center; font-size: 12px; }
 .app-empty strong { display: block; margin-bottom: 6px; color: var(--ink); font: 700 15px var(--display); }
