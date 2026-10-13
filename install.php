@@ -37,8 +37,8 @@ try {
     error_log('OfficeFlow schema check failed: ' . $exception->getMessage());
     installationProblem(
         'Import the database schema first',
-        'The database is reachable, but the OfficeFlow tables are missing. Import database/migrations/001_initial_schema.sql into the empty OfficeFlow database, then reload this page.',
-        'clpctl db:import --databaseName=YOUR_DATABASE --file=/home/YOUR_SITE_USER/tmp/001_initial_schema.sql'
+        'The database is reachable, but the OfficeFlow tables are missing. Import officeflow-schema.sql into the empty OfficeFlow database, then reload this page.',
+        'clpctl db:import --databaseName=YOUR_DATABASE --file=/home/YOUR_SITE_USER/tmp/officeflow-schema.sql'
     );
 }
 

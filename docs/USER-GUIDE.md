@@ -16,11 +16,11 @@ OfficeFlow is drop-in. Upload the folder contents to the web root and open the s
 
 ### Steps
 
-1. **Upload the files.** Put everything in the web root: `index.php`, `login.php`, `install.php`, `requests.php`, `tasks.php`, `inventory.php`, `module.php`, `team.php`, `reports.php`, `activity.php`, `settings.php`, `notifications.php`, `logout.php`, `preview.html`, plus the `app/`, `assets/`, `config/`, and `database/` folders.
+1. **Upload the files.** Put everything in the web root: `index.php`, `login.php`, `install.php`, `requests.php`, `tasks.php`, `inventory.php`, `module.php`, `team.php`, `reports.php`, `activity.php`, `settings.php`, `notifications.php`, `logout.php`, `preview.html`, `officeflow-schema.sql`, plus the `app/`, `assets/`, and `config/` folders.
 
 2. **Create the database.** In your panel, add a MySQL database and note the **name**, **user**, and **password**.
 
-3. **Import the schema.** Open phpMyAdmin for that database, choose **Import**, upload `officeflow-schema.sql`, and run it. That one file creates all 15 tables. (The numbered files in `database/migrations/` are only for upgrading an installation that already exists.)
+3. **Import the schema.** Open phpMyAdmin for that database, choose **Import**, upload `officeflow-schema.sql`, and run it. That one file creates all 15 tables.
 
    Tiny databases like this are safe in phpMyAdmin. The general warning against importing with phpMyAdmin is about large or already-populated databases, which does not apply here.
 
@@ -32,7 +32,7 @@ OfficeFlow is drop-in. Upload the folder contents to the web root and open the s
 
 ### Notes
 
-- The `.htaccess` files block direct access to `app/`, `config/`, `database/`, and `tests/` on Apache hosts. Nginx ignores `.htaccess`; the PHP guard inside those files still refuses direct requests, so nothing sensitive is exposed.
+- The `.htaccess` files block direct access to `app/`, `config/`, and `tests/` on Apache hosts. Nginx ignores `.htaccess`; the PHP guard inside those files still refuses direct requests, so nothing sensitive is exposed.
 - Delete `README.md`, `docs/`, and `tests/` from the server if you like. They are not needed at runtime.
 - Keep `config/database.php` out of any backup you share.
 

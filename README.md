@@ -24,19 +24,18 @@ app/                         PHP services, bootstrap, and view partials
 config/database.example.php  safe configuration template
 config/database.php          credentials created during setup; ignored by Git
 officeflow-schema.sql        complete schema for a new installation
-database/migrations/         numbered, forward-only migrations for upgrades
 docs/                        architecture and deployment notes
 tests/test_*.py              schema and static UI checks
 tests/php/*_test.php         service-level integration checks (SQLite)
 ```
 
-The app is **drop-in**: upload the project contents straight into the site's web root (`public_html` on cPanel, the site directory on CloudPanel). No document-root or vhost change is required, because there is no separate `public/` folder. `app/`, `config/`, and `database/` carry a PHP guard and ship with `.htaccess` deny rules so they stay unreachable from the browser.
+The app is **drop-in**: upload the project contents straight into the site's web root (`public_html` on cPanel, the site directory on CloudPanel). No document-root or vhost change is required, because there is no separate `public/` folder. `app/` and `config/` carry a PHP guard and ship with `.htaccess` deny rules so they stay unreachable from the browser.
 
 ## Database
 
 For a new installation, import `officeflow-schema.sql`. It creates all 15 tables and is safe to run twice.
 
-`database/migrations/` holds the numbered, forward-only migrations that make up that combined file (`001_initial_schema.sql`, `002_office_resources.sql`). Apply only the newer files when upgrading an installation that already exists, so existing data is preserved. Back up the database before applying updates.
+`officeflow-schema.sql` is the single source of the database structure. Change it there, and regenerate `app/Schema.php` (the installer's embedded copy) in the same commit so the two never drift. Back up the database before applying structural changes to a live installation.
 
 ## Requirements planned for the app
 

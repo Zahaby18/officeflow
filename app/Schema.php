@@ -11,8 +11,7 @@ if (!defined('OFFICEFLOW_APP')) {
  * Embedded schema so the installer can create every table without any .sql file
  * being reachable over the web.
  *
- * Generated from database/migrations/001_initial_schema.sql and
- * database/migrations/002_office_resources.sql. Regenerate after changing either.
+ * Generated from officeflow-schema.sql. Regenerate after changing that file.
  */
 final class Schema
 {

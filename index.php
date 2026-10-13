@@ -15,7 +15,7 @@ try {
     $configExists = is_file(__DIR__ . '/config/database.php');
     $title = $configExists ? 'Database setup needs attention' : 'Connect the OfficeFlow database';
     $detail = $configExists
-        ? 'Check the database connection and confirm that database/migrations/001_initial_schema.sql has been imported.'
+        ? 'Check the database connection and confirm that officeflow-schema.sql has been imported.'
         : 'Copy config/database.example.php to config/database.php and enter the database connection values for this installation.';
     echo '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' . officeflow_e($title) . '</title><link rel="stylesheet" href="/assets/css/officeflow-app.css"><body class="auth-page"><main class="auth-main"><section class="auth-problem"><p class="eyebrow">OFFICEFLOW SETUP</p><h1>' . officeflow_e($title) . '</h1><p>' . officeflow_e($detail) . '</p><p><a href="/install.php">Open setup page</a></p></section></main></body></html>';
     exit;

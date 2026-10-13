@@ -16,7 +16,7 @@ The app is drop-in and does not need a document-root change. Keep the code and d
 
 ## Initial data model
 
-`001_initial_schema.sql` establishes the first useful vertical slice: users, office settings, requests and comments, tasks, assets, inventory and stock movements, announcements, notifications, and activity logs. Vendors, room bookings, document/SOP management, and reports are later modules and should get new migrations only after their workflows are agreed.
+`officeflow-schema.sql` defines all 15 tables in one file: users, office settings, requests and comments, tasks, assets, inventory and stock movements, announcements, notifications, activity logs, vendors, maintenance records, rooms, and documents. It is the single source of the database structure; `app/Schema.php` embeds a copy for the installer and must be regenerated whenever the file changes.
 
 A recurring task row records its recurrence setting, but recurrence generation belongs to application logic and is not implemented by the schema alone. Inventory quantity and its movement ledger must be updated in one database transaction once those actions are implemented.
 
