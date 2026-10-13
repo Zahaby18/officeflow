@@ -50,6 +50,25 @@ expectInstall($pdo->query("SELECT setting_value FROM office_settings WHERE setti
 expectInstall(InstallService::createFirstAdmin($pdo, 'Second Admin', 'second@example.test', 'Another long password', 'Other') === null, 'second setup attempt must be rejected');
 expectInstall((int) $pdo->query('SELECT COUNT(*) FROM users')->fetchColumn() === 1, 'installer must never create a second first admin');
 
+// An inactive placeholder account (the Sample data account that ships with the
+// example content) must not be mistaken for a finished installation.
+$placeholder = new PDO('sqlite::memory:');
+$placeholder->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$placeholder->exec("CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    role TEXT NOT NULL,
+    is_active INTEGER NOT NULL DEFAULT 1
+)");
+$placeholder->exec("INSERT INTO users (name, email, password_hash, role, is_active)
+                    VALUES ('Sample data', 'sample@example.invalid', '*', 'staff', 0)");
+expectInstall(!InstallService::isInstalled($placeholder), 'an inactive placeholder must not count as installed');
+expectInstall(InstallService::schemaExists($placeholder), 'the tables exist even so');
+$placeholder->exec("UPDATE users SET is_active = 1, role = 'admin' WHERE email = 'sample@example.invalid'");
+expectInstall(InstallService::isInstalled($placeholder), 'an active admin does count as installed');
+
 try {
     InstallService::createFirstAdmin($pdo, 'Bad', 'not-an-email', 'short', 'Office');
     throw new RuntimeException('invalid install input should throw');

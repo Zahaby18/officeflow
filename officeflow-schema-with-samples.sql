@@ -8,20 +8,24 @@
 -- first day.
 --
 -- HOW TO USE IT
---   1. Import this file into your empty database.
---   2. Open your site and create your administrator account.
---   3. Import this same file one more time.
+--   Import this file into your empty database. That is all. The sixteen tables
+--   are created and every content table is filled with five example records.
+--   Then open your site and create your administrator account.
 --
--- Step 3 is what loads the examples. Example records have to belong to
--- somebody, and at step 1 no account exists yet, so the file waits. Every
--- example is attached to the first account in the database, which is the
--- administrator you created in step 2.
+-- The examples are held by an inactive placeholder account called "Sample data",
+-- so they can exist before you do. It cannot be signed into, and it does not stop
+-- the setup screen from appearing. Once your own account exists you can edit,
+-- reassign or delete any example from inside the app.
+--
+-- If you prefer the examples to belong to you from the start, create your
+-- administrator account first and import this file afterwards. Examples are
+-- attached to the lowest active account.
 --
 -- The file is safe to run as many times as you like. It never drops a table and
 -- it never touches data you have entered: examples are only added when a table
 -- is still empty.
 --
--- Do not want the examples? Skip step 3, or delete them from inside the app.
+-- Want an empty workspace instead? Import officeflow-schema.sql.
 -- ============================================================================
 
 SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -308,7 +312,17 @@ CREATE TABLE IF NOT EXISTS `login_attempts` (
 -- Example content
 -- ============================================================================
 
-SET @uid := (SELECT MIN(id) FROM users);
+-- A placeholder account holds the examples so they can be loaded in a single
+-- import, before you have created your own account. It is inactive and cannot
+-- be signed into. Once your own administrator exists, the examples keep working
+-- and you can reassign or delete them from inside the app.
+INSERT INTO `users` (`name`, `email`, `password_hash`, `role`, `is_active`)
+SELECT 'Sample data', 'sample@example.invalid', '*', 'staff', 0
+WHERE NOT EXISTS (SELECT 1 FROM `users` WHERE `email` = 'sample@example.invalid');
+
+-- Examples are attached to the lowest active account, so if you create your own
+-- account first and then import this file, they belong to you instead.
+SET @uid := (SELECT COALESCE(MIN(CASE WHEN is_active = 1 THEN id END), MIN(id)) FROM `users`);
 
 -- assets: 5 examples
 SET @seed := IF(@uid IS NULL, 0, IF((SELECT COUNT(*) FROM `assets`) = 0, 1, 0));

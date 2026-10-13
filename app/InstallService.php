@@ -22,16 +22,22 @@ final class InstallService
     }
 
     /**
-     * True when an administrator already exists. Returns false instead of throwing
-     * when the tables are missing, so every page sends the visitor to the setup
-     * screen rather than showing a 503.
+     * True when an active administrator exists, which is what "installed" means.
+     *
+     * Deliberately not "any user exists": an installation may legitimately carry
+     * an inactive placeholder account (for example the Sample data account that
+     * ships with the example content). That must not close the setup screen.
      */
     public static function isInstalled(PDO $pdo): bool
     {
         if (!self::schemaExists($pdo)) {
             return false;
         }
-        return (bool) $pdo->query('SELECT 1 FROM users LIMIT 1')->fetchColumn();
+
+        $statement = $pdo->query(
+            "SELECT 1 FROM users WHERE role = 'admin' AND is_active = 1 LIMIT 1"
+        );
+        return (bool) $statement->fetchColumn();
     }
 
     /** Create the only first-admin account. Returns null once setup has already happened. */
