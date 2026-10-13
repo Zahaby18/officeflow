@@ -39,22 +39,33 @@ if ($isInstalled) {
 }
 
 $schemaMessage = '';
-if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['action'] ?? '') === 'create_schema') {
+$action = ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' ? (string) ($_POST['action'] ?? '') : '';
+if (in_array($action, ['create_schema', 'create_schema_samples', 'load_samples'], true)) {
     if (!officeflow_verify_post()) {
         $schemaMessage = 'This form expired. Reload the page and try again.';
     } else {
         try {
-            foreach (Schema::statements() as $statement) {
-                $pdo->exec($statement);
+            if ($action === 'create_schema' || $action === 'create_schema_samples') {
+                foreach (Schema::statements() as $statement) {
+                    $pdo->exec($statement);
+                }
+                ActivityService::record($pdo, null, 'created', 'database', null, 'Created the OfficeFlow database tables');
             }
-            ActivityService::record($pdo, null, 'created', 'database', null, 'Created the OfficeFlow database tables');
+            if ($action === 'create_schema_samples' || $action === 'load_samples') {
+                foreach (SampleData::statements() as $statement) {
+                    $pdo->exec($statement);
+                }
+                ActivityService::record($pdo, null, 'created', 'sample-data', null, 'Loaded the example content');
+            }
             officeflow_redirect('/install.php');
         } catch (Throwable $exception) {
-            error_log('OfficeFlow schema creation failed: ' . $exception->getMessage());
-            $schemaMessage = 'The tables could not be created. Check that the database user is allowed to create tables, then try again.';
+            error_log('OfficeFlow setup step failed: ' . $exception->getMessage());
+            $schemaMessage = 'That step could not be completed. Check that the database user is allowed to create tables, then try again.';
         }
     }
 }
+
+$hasExamples = !$needsSchema && InstallService::hasExampleContent($pdo);
 
 $errors = [];
 $name = '';
@@ -112,14 +123,21 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     <?php if ($needsSchema): ?>
     <section class="auth-card" aria-labelledby="setupTitle">
       <p class="eyebrow">OFFICEFLOW INSTALLATION</p><h2 id="setupTitle">Create the database tables</h2>
-      <p class="auth-card-intro">The database connection works, but the OfficeFlow tables do not exist yet. Let OfficeFlow create all 15 tables, then continue to the administrator account.</p>
+      <p class="auth-card-intro">The database connection works, but the OfficeFlow tables do not exist yet. Choose how you want the workspace to start.</p>
       <?php if ($schemaMessage !== ''): ?><div class="app-flash app-flash-error" role="alert"><?= officeflow_e($schemaMessage) ?></div><?php endif; ?>
       <form method="post" action="/install.php">
         <?= officeflow_csrf_input() ?>
-        <input type="hidden" name="action" value="create_schema">
-        <div class="app-form-actions"><button class="button button-primary" type="submit">Create the tables</button></div>
+        <input type="hidden" name="action" value="create_schema_samples">
+        <div class="app-form-actions"><button class="button button-primary" type="submit">Create the tables with example content</button></div>
       </form>
-      <p class="auth-note">Prefer phpMyAdmin? Import <code>officeflow-schema.sql</code> into this database and reload this page instead. This button exists so that file never has to stay on the server.</p>
+      <p class="auth-note">Sixteen tables, and five example records in every module, so the screens are not empty while you learn your way around. The examples are held by an inactive account called Sample data, which cannot be signed into, and you can edit or delete any of them once you are in.</p>
+      <form method="post" action="/install.php" style="margin-top:14px">
+        <?= officeflow_csrf_input() ?>
+        <input type="hidden" name="action" value="create_schema">
+        <div class="app-form-actions"><button class="button button-secondary" type="submit">Create the tables only</button></div>
+      </form>
+      <p class="auth-note">Sixteen empty tables and nothing else. Pick this if you would rather start from a blank workspace.</p>
+      <p class="auth-note">Prefer phpMyAdmin? Import <code>officeflow-schema-with-samples.sql</code> or <code>officeflow-schema.sql</code> into this database and reload this page instead.</p>
     </section>
     <?php else: ?>
     <section class="auth-card" aria-labelledby="setupTitle">
@@ -134,6 +152,14 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         <div class="app-field"><label for="password_confirm">Confirm password</label><input id="password_confirm" name="password_confirm" type="password" required minlength="12" maxlength="200" autocomplete="new-password"></div>
         <div class="app-form-actions"><button class="button button-primary" type="submit">Create admin account</button></div>
       </form>
+      <?php if (!$hasExamples): ?>
+        <form method="post" action="/install.php" style="margin-top:18px">
+          <?= officeflow_csrf_input() ?>
+          <input type="hidden" name="action" value="load_samples">
+          <div class="app-form-actions"><button class="button button-secondary" type="submit">Load the example content</button></div>
+        </form>
+        <p class="auth-note">Optional. Adds five example records to every module so the screens are not empty. You can delete them at any time.</p>
+      <?php endif; ?>
     </section>
     <?php endif; ?>
   </main>

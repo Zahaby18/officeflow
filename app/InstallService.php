@@ -40,6 +40,16 @@ final class InstallService
         return (bool) $statement->fetchColumn();
     }
 
+    /** True when the tables exist but no example content has been loaded. */
+    public static function hasExampleContent(PDO $pdo): bool
+    {
+        try {
+            return (bool) $pdo->query('SELECT 1 FROM assets LIMIT 1')->fetchColumn();
+        } catch (PDOException $exception) {
+            return false;
+        }
+    }
+
     /** Create the only first-admin account. Returns null once setup has already happened. */
     public static function createFirstAdmin(
         PDO $pdo,

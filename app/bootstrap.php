@@ -12,6 +12,7 @@ require_once __DIR__ . '/InstallService.php';
 require_once __DIR__ . '/Csrf.php';
 require_once __DIR__ . '/LoginThrottle.php';
 require_once __DIR__ . '/Schema.php';
+require_once __DIR__ . '/SampleData.php';
 require_once __DIR__ . '/ActivityService.php';
 require_once __DIR__ . '/NotificationService.php';
 require_once __DIR__ . '/RequestService.php';
