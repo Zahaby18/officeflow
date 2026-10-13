@@ -30,8 +30,16 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         if (!$isAdmin) {
             throw new InvalidArgumentException('Only an administrator can change office settings.');
         }
-        SettingsService::save($pdo, $user['id'], $_POST);
-        officeflow_flash('success', 'Office settings saved.');
+        if (($_POST['action'] ?? '') === 'load_samples') {
+            foreach (SampleData::statements() as $statement) {
+                $pdo->exec($statement);
+            }
+            ActivityService::record($pdo, $user['id'], 'created', 'sample-data', null, 'Loaded the example content');
+            officeflow_flash('success', 'Example content loaded. Delete anything that does not fit your office.');
+        } else {
+            SettingsService::save($pdo, $user['id'], $_POST);
+            officeflow_flash('success', 'Office settings saved.');
+        }
     } catch (InvalidArgumentException $exception) {
         officeflow_flash('error', $exception->getMessage());
     } catch (Throwable $exception) {
@@ -67,6 +75,20 @@ require __DIR__ . '/app/views/app-header.php';
   </form>
 </section>
 <?php endif; ?>
+
+<section class="app-surface app-records">
+  <header class="app-surface-head"><div><h2>Example content</h2><p><?= InstallService::hasExampleContent($pdo) ? 'This workspace already has content in it. Loading the examples again will not overwrite anything.' : 'This workspace is empty. Load five example records into every module to see how it works.' ?></p></div></header>
+  <?php if (!$isAdmin): ?>
+    <div class="app-empty"><strong>Administrator only</strong>Only an administrator can load the example content.</div>
+  <?php else: ?>
+    <form method="post" action="/settings.php" class="module-form">
+      <?= officeflow_csrf_input() ?>
+      <input type="hidden" name="action" value="load_samples">
+      <div class="app-form-actions"><button class="button button-secondary" type="submit"><?= InstallService::hasExampleContent($pdo) ? 'Load the examples again' : 'Load the example content' ?></button></div>
+    </form>
+    <p class="auth-note" style="padding:0 18px 16px">Examples are held by an inactive account called Sample data and never touch records you have entered yourself. Delete any of them at any time.</p>
+  <?php endif; ?>
+</section>
 
 <section class="app-surface app-records">
   <header class="app-surface-head"><div><h2>Workspace information</h2><p>Read-only details about this installation</p></div></header>
