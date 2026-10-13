@@ -90,6 +90,71 @@ final class RequestService
         return $summary;
     }
 
+    /** One request with the names needed by the detail screen. */
+    public static function find(PDO $pdo, int $id): ?array
+    {
+        $statement = $pdo->prepare(
+            'SELECT r.id, r.request_code, r.title, r.details, r.category, r.priority, r.status,
+                    r.due_at, r.completed_at, r.created_at, r.updated_at,
+                    requester.name AS requester_name, requester.email AS requester_email,
+                    assignee.name AS assignee_name
+             FROM requests r
+             INNER JOIN users requester ON requester.id = r.requester_id
+             LEFT JOIN users assignee ON assignee.id = r.assignee_id
+             WHERE r.id = :id
+             LIMIT 1'
+        );
+        $statement->execute(['id' => $id]);
+        return $statement->fetch(PDO::FETCH_ASSOC) ?: null;
+    }
+
+    public static function comments(PDO $pdo, int $requestId): array
+    {
+        $statement = $pdo->prepare(
+            'SELECT c.id, c.body, c.created_at, u.name AS author_name, u.role AS author_role
+             FROM request_comments c
+             LEFT JOIN users u ON u.id = c.author_id
+             WHERE c.request_id = :id
+             ORDER BY c.created_at ASC, c.id ASC'
+        );
+        $statement->execute(['id' => $requestId]);
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public static function addComment(PDO $pdo, int $requestId, int $authorId, string $body): void
+    {
+        $body = trim($body);
+        if ($body === '' || mb_strlen($body, 'UTF-8') > 2000) {
+            throw new InvalidArgumentException('A comment must be between 1 and 2000 characters.');
+        }
+        $request = self::find($pdo, $requestId);
+        if ($request === null) {
+            throw new RuntimeException('That request no longer exists.');
+        }
+
+        $statement = $pdo->prepare(
+            'INSERT INTO request_comments (request_id, author_id, body) VALUES (:id, :author, :body)'
+        );
+        $statement->execute(['id' => $requestId, 'author' => $authorId, 'body' => $body]);
+
+        ActivityService::record($pdo, $authorId, 'commented', 'requests', $requestId, 'Commented on request #' . $requestId);
+
+        // Tell the administrators who watch the queue, not the person who just wrote.
+        $watchers = $pdo->prepare("SELECT id FROM users WHERE is_active = 1 AND role = 'admin'");
+        $watchers->execute();
+        foreach ($watchers->fetchAll(PDO::FETCH_COLUMN) as $watcherId) {
+            NotificationService::notify(
+                $pdo,
+                (int) $watcherId,
+                $authorId,
+                'request_comment',
+                'New comment on ' . $request['request_code'],
+                mb_substr($body, 0, 140, 'UTF-8'),
+                '/request.php?id=' . $requestId
+            );
+        }
+    }
+
     public static function countOpen(PDO $pdo): int
     {
         return (int) $pdo->query(

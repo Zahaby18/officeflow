@@ -77,6 +77,21 @@ final class NotificationService
         return (int) $statement->fetchColumn();
     }
 
+    /** One notification, scoped to its owner so an id cannot be guessed across accounts. */
+    public static function find(PDO $pdo, int $id, int $userId): ?array
+    {
+        $statement = $pdo->prepare(
+            'SELECT n.id, n.notification_type, n.title, n.body, n.target_url, n.read_at, n.created_at,
+                    u.name AS actor_name
+             FROM notifications n
+             LEFT JOIN users u ON u.id = n.actor_id
+             WHERE n.id = :id AND n.user_id = :user_id
+             LIMIT 1'
+        );
+        $statement->execute(['id' => $id, 'user_id' => $userId]);
+        return $statement->fetch(PDO::FETCH_ASSOC) ?: null;
+    }
+
     public static function markAllRead(PDO $pdo, int $userId): void
     {
         $statement = $pdo->prepare('UPDATE notifications SET read_at = CURRENT_TIMESTAMP WHERE user_id = :user_id AND read_at IS NULL');

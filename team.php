@@ -92,6 +92,14 @@ require __DIR__ . '/app/views/app-header.php';
 <?php endif; ?>
 
 <section class="app-surface app-records">
+  <header class="app-surface-head"><div><h2>What each role can do</h2><p>OfficeFlow has two roles, and the difference is only about editing</p></div></header>
+  <div class="app-table-wrap"><table class="app-table"><thead><tr><th>Role</th><th>Can do</th><th>Cannot do</th></tr></thead><tbody>
+    <tr><th>Staff</th><td>Create requests, add tasks, add office records, move tasks along, comment on requests</td><td>Edit or delete records, manage team accounts, change office settings</td></tr>
+    <tr><th>Admin</th><td>Everything staff can do, plus edit and delete records, update request status, add and disable accounts, reset passwords, change settings</td><td>Remove the last active administrator, or lock themselves out</td></tr>
+  </tbody></table></div>
+</section>
+
+<section class="app-surface app-records">
   <header class="app-surface-head"><div><h2>Team members</h2><p><?= count($members) ?> account<?= count($members) === 1 ? '' : 's' ?></p></div></header>
   <div class="app-table-wrap"><table class="app-table">
     <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Access</th><th>Last sign-in</th><?php if ($isAdmin): ?><th>Manage</th><?php endif; ?></tr></thead>

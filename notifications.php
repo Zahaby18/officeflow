@@ -57,11 +57,11 @@ require __DIR__ . '/app/views/app-header.php';
       <tbody>
       <?php foreach ($notifications as $notification): ?>
         <tr>
-          <td><span class="app-request-title"><strong><?= officeflow_e($notification['title']) ?></strong><small><?= officeflow_e($notification['body'] ?? '') ?></small></span></td>
+          <td><span class="app-request-title"><a class="row-link" href="/notification.php?id=<?= (int) $notification['id'] ?>"><strong><?= officeflow_e($notification['title']) ?></strong></a><small><?= officeflow_e($notification['body'] ?? '') ?></small></span></td>
           <td><?= officeflow_e($notification['actor_name'] ?? 'System') ?></td>
           <td><?= officeflow_e(NotificationService::relativeTime((string) $notification['created_at'])) ?></td>
           <td><span class="status status-<?= $notification['read_at'] === null ? 'review' : 'complete' ?>"><?= $notification['read_at'] === null ? 'Unread' : 'Read' ?></span></td>
-          <td><?php if ($notification['target_url'] !== null): ?><a class="text-button" href="<?= officeflow_e($notification['target_url']) ?>">Open →</a><?php endif; ?></td>
+          <td><a class="text-button" href="/notification.php?id=<?= (int) $notification['id'] ?>">Read →</a></td>
         </tr>
       <?php endforeach; ?>
       </tbody>

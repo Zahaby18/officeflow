@@ -28,7 +28,7 @@ final class Modules
         ],
         'management' => [
             'label' => 'Management',
-            'items' => ['team', 'reports', 'activity', 'settings'],
+            'items' => ['team', 'reports', 'activity'],
         ],
     ];
 

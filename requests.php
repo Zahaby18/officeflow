@@ -84,7 +84,7 @@ require __DIR__ . '/app/views/app-header.php';
     <?php foreach ($requests as $request): ?>
       <?php $statusClass = $request['status'] === 'new' || $request['status'] === 'waiting' ? 'review' : ($request['status'] === 'in_progress' ? 'progress' : ($request['status'] === 'completed' ? 'complete' : 'overdue')); ?>
       <tr>
-        <td><span class="app-request-title"><strong><?= officeflow_e($request['title']) ?></strong><small class="app-code"><?= officeflow_e($request['request_code']) ?> · <?= officeflow_e(date('M j, Y', strtotime($request['created_at']))) ?></small></span></td>
+        <td><span class="app-request-title"><a class="row-link" href="/request.php?id=<?= (int) $request['id'] ?>"><strong><?= officeflow_e($request['title']) ?></strong></a><small class="app-code"><?= officeflow_e($request['request_code']) ?> · <?= officeflow_e(date('M j, Y', strtotime($request['created_at']))) ?></small><?php if (trim((string) ($request['details'] ?? '')) !== ''): ?><small class="row-detail"><?= officeflow_e(mb_strimwidth(trim((string) $request['details']), 0, 120, '…', 'UTF-8')) ?></small><?php endif; ?></span></td>
         <td><?= officeflow_e($request['category']) ?></td>
         <td><span class="app-priority app-priority-<?= officeflow_e($request['priority']) ?>"><?= officeflow_e($request['priority']) ?></span></td>
         <td><span class="status status-<?= officeflow_e($statusClass) ?>"><?= officeflow_e(str_replace('_', ' ', $request['status'])) ?></span></td>

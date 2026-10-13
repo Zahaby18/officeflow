@@ -36,7 +36,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .brand small { display: block; margin-top: 3px; color: #a3b9b7; font-size: 9px; letter-spacing: 1.1px; text-transform: uppercase; }
 .navigation { display: grid; gap: 3px; }
 .nav-heading { margin: 15px 0 6px; padding: 0 12px; color: #789493; font-size: 9px; font-weight: 700; letter-spacing: 1.35px; text-transform: uppercase; }
-.nav-link { width: 100%; min-height: 37px; display: flex; align-items: center; gap: 10px; padding: 0 11px; border: 0; border-radius: 6px; background: transparent; color: var(--sidebar-muted); text-align: left; font-size: 16px; transition: background .16s ease, color .16s ease; }
+.nav-link { width: 100%; min-height: 37px; display: flex; align-items: center; gap: 10px; padding: 0 11px; border: 0; border-radius: 6px; background: transparent; color: var(--sidebar-muted); text-align: left; text-decoration: none; font-size: 16px; transition: background .16s ease, color .16s ease; }
 .nav-link .icon { width: 16px; height: 16px; }
 .nav-link:hover { background: rgb(255 255 255 / 7%); color: white; }
 .nav-link.is-active { background: #24494a; color: white; font-weight: 700; }
@@ -74,7 +74,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .notification-head div { display: flex; align-items: baseline; gap: 7px; }
 .notification-head strong { font: 700 13px var(--display); }
 .notification-head span { color: #899493; font-size: 10px; }
-.text-button { border: 0; background: transparent; color: var(--teal-dark); font-size: 10px; font-weight: 700; }
+.text-button { border: 0; background: transparent; color: var(--teal-dark); text-decoration: none; font-size: 10px; font-weight: 700; }
 .text-button:hover { text-decoration: underline; }
 .notification-item { width: 100%; display: grid; grid-template-columns: 8px 1fr; gap: 9px; padding: 10px; border: 0; border-radius: 6px; background: transparent; text-align: left; }
 .notification-item:hover { background: #f5f8f6; }
@@ -89,7 +89,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .page-heading h1 { margin: 0; font: 700 26px/1.15 var(--display); letter-spacing: -.8px; }
 .heading-copy { margin: 7px 0 0; color: var(--muted); font-size: 11px; }
 .heading-actions { display: flex; gap: 8px; }
-.button { min-height: 37px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 0 13px; border: 0; border-radius: 6px; font-size: 11px; font-weight: 700; transition: background .15s ease, transform .15s ease; }
+.button { min-height: 37px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 0 13px; border: 0; border-radius: 6px; text-decoration: none; font-size: 11px; font-weight: 700; transition: background .15s ease, transform .15s ease; }
 .button .icon { width: 14px; height: 14px; }
 .button-primary { background: var(--teal); color: white; }
 .button-primary:hover { transform: translateY(-1px); background: var(--teal-dark); }
