@@ -49,6 +49,8 @@ OfficeFlow is drop-in. Upload the folder contents to the web root and open the s
 
 Everyone signs in at the same URL with the email and password their administrator gave them. Any device works: open the same address and the same office data appears. That is what makes it different from a spreadsheet.
 
+After five wrong passwords for one email, or twenty wrong passwords from one address, sign-in pauses for the rest of a fifteen-minute window. That is deliberate brute-force protection, not a bug. A successful sign-in clears the count for that email.
+
 ### Roles
 
 - **Staff** — create requests, add tasks, add and update office records.

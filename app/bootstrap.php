@@ -10,6 +10,7 @@ if (!defined('OFFICEFLOW_APP')) {
 require_once __DIR__ . '/AuthService.php';
 require_once __DIR__ . '/InstallService.php';
 require_once __DIR__ . '/Csrf.php';
+require_once __DIR__ . '/LoginThrottle.php';
 require_once __DIR__ . '/Schema.php';
 require_once __DIR__ . '/ActivityService.php';
 require_once __DIR__ . '/NotificationService.php';
@@ -118,6 +119,20 @@ function officeflow_is_installed(PDO $pdo): bool
 function officeflow_asset(string $path): string
 {
     return '/assets/' . ltrim($path, '/');
+}
+
+/**
+ * The connecting address, used for rate limiting.
+ *
+ * Deliberately reads REMOTE_ADDR and not X-Forwarded-For: a client can send any
+ * value in that header, which would let an attacker reset the throttle on every
+ * request. If the app is later placed behind a trusted reverse proxy, whitelist
+ * the proxy here instead of trusting the header blindly.
+ */
+function officeflow_client_ip(): string
+{
+    $ip = (string) ($_SERVER['REMOTE_ADDR'] ?? '');
+    return $ip === '' ? 'unknown' : $ip;
 }
 
 function officeflow_flash(string $type, string $message): void

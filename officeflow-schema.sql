@@ -264,3 +264,15 @@ CREATE TABLE IF NOT EXISTS `documents` (
   KEY `idx_documents_status_category` (`status`, `category`),
   CONSTRAINT `fk_documents_creator` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `login_attempts` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `email_hash` CHAR(64) NOT NULL,
+  `ip_hash` CHAR(64) NOT NULL,
+  `successful` TINYINT(1) NOT NULL DEFAULT 0,
+  `attempted_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_login_attempts_email_time` (`email_hash`, `attempted_at`),
+  KEY `idx_login_attempts_ip_time` (`ip_hash`, `attempted_at`),
+  KEY `idx_login_attempts_time` (`attempted_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

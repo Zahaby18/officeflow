@@ -24,16 +24,24 @@ if (AuthService::currentUser($pdo)) {
 
 $error = '';
 $email = '';
+$clientIp = officeflow_client_ip();
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     $email = trim((string) ($_POST['email'] ?? ''));
     $password = (string) ($_POST['password'] ?? '');
 
     if (!officeflow_verify_post()) {
         $error = 'This form expired. Reload the page and try again.';
-    } elseif (AuthService::attempt($pdo, $email, $password) === null) {
-        $error = 'Email or password is incorrect, or this account is inactive.';
     } else {
-        officeflow_redirect('/');
+        $wait = LoginThrottle::retryAfter($pdo, $email, $clientIp);
+        if ($wait !== null) {
+            $error = 'Too many sign-in attempts. Try again in ' . LoginThrottle::describeWait($wait) . '.';
+        } elseif (AuthService::attempt($pdo, $email, $password) === null) {
+            LoginThrottle::recordFailure($pdo, $email, $clientIp);
+            $error = 'Email or password is incorrect, or this account is inactive.';
+        } else {
+            LoginThrottle::recordSuccess($pdo, $email);
+            officeflow_redirect('/');
+        }
     }
 }
 ?>

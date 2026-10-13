@@ -68,4 +68,5 @@ The Python suite validates the schema definition and the static preview. The PHP
 - Use a separate database account with access only to the OfficeFlow database.
 - Deactivate staff accounts rather than deleting users referenced by office records.
 - Passwords are stored with `password_hash()`; forms are CSRF-protected; all output is escaped; sessions use HttpOnly, SameSite=Lax cookies and regenerate on login.
-- A production release still needs rate limiting on login, backups, and a tested update path.
+- Sign-in is rate limited: 5 failures for one email or 20 from one address inside 15 minutes locks further attempts for the rest of the window. Email and address are stored only as salted hashes.
+- A production release still needs backups and a tested update path.

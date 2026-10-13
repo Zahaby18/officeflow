@@ -21,6 +21,7 @@ EXPECTED_TABLES = {
     "maintenance_records",
     "rooms",
     "documents",
+    "login_attempts",
 }
 
 
@@ -32,7 +33,7 @@ class OfficeFlowSchemaTests(unittest.TestCase):
     def test_single_schema_file_creates_every_table(self):
         tables = set(re.findall(r"CREATE TABLE IF NOT EXISTS `([^`]+)`", self.schema, re.I))
         self.assertEqual(tables, EXPECTED_TABLES)
-        self.assertEqual(self.schema.count("CREATE TABLE IF NOT EXISTS"), 15)
+        self.assertEqual(self.schema.count("CREATE TABLE IF NOT EXISTS"), 16)
 
     def test_users_have_admin_and_staff_roles_and_unique_email(self):
         users = re.search(r"CREATE TABLE IF NOT EXISTS `users`\s*\((.*?)\)\s*ENGINE=", self.schema, re.I | re.S)
@@ -69,7 +70,7 @@ class OfficeFlowSchemaTests(unittest.TestCase):
             self.schema,
             re.I | re.S,
         )
-        self.assertEqual(len(definitions), 15)
+        self.assertEqual(len(definitions), 16)
         for definition in definitions:
             self.assertRegex(definition, r"InnoDB")
             self.assertRegex(definition, r"utf8mb4")

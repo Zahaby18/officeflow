@@ -40,6 +40,13 @@ final class Schema
     private static function raw(): string
     {
         return <<<'SQL'
+-- OfficeFlow — complete database schema (fresh installs)
+-- Creates all 15 tables in one import.
+--
+-- Use this file when setting up a NEW installation.
+-- If an installation already exists, do not run this; apply only the newer
+-- files in database/migrations/ instead, so existing data is preserved.
+
 -- OfficeFlow initial schema
 -- One installation represents one office. This schema intentionally has no tenant/workspace_id.
 -- Safe to re-run for an initial install: creates missing tables and never drops existing data.
@@ -227,13 +234,6 @@ CREATE TABLE IF NOT EXISTS `activity_logs` (
   CONSTRAINT `fk_activity_logs_actor` FOREIGN KEY (`actor_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-
--- OfficeFlow second migration: office resources the first schema did not cover.
--- Adds vendors, maintenance records, rooms/facilities, and documents/SOPs.
--- Same rules as the first migration: InnoDB, utf8mb4, foreign keys, and safe to
--- re-run for a fresh install because every statement is CREATE TABLE IF NOT EXISTS.
--- Table order matters: vendors is created before maintenance_records, which references it.
-
 SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `vendors` (
@@ -307,6 +307,17 @@ CREATE TABLE IF NOT EXISTS `documents` (
   CONSTRAINT `fk_documents_creator` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS `login_attempts` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `email_hash` CHAR(64) NOT NULL,
+  `ip_hash` CHAR(64) NOT NULL,
+  `successful` TINYINT(1) NOT NULL DEFAULT 0,
+  `attempted_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_login_attempts_email_time` (`email_hash`, `attempted_at`),
+  KEY `idx_login_attempts_ip_time` (`ip_hash`, `attempted_at`),
+  KEY `idx_login_attempts_time` (`attempted_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 SQL;
     }
 }
