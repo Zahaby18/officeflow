@@ -137,7 +137,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         <div class="app-form-actions"><button class="button button-secondary" type="submit">Create the tables only</button></div>
       </form>
       <p class="auth-note">Sixteen empty tables and nothing else. Pick this if you would rather start from a blank workspace.</p>
-      <p class="auth-note">Prefer phpMyAdmin? Import <code>officeflow-schema-with-samples.sql</code> or <code>officeflow-schema.sql</code> into this database and reload this page instead.</p>
+      <p class="auth-note">Prefer phpMyAdmin? Import <code>officeflow-schema.sql</code> into this database and reload this page instead. It creates the tables and the example content in one go.</p>
     </section>
     <?php else: ?>
     <section class="auth-card" aria-labelledby="setupTitle">

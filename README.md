@@ -33,9 +33,9 @@ The app is **drop-in**: upload the project contents straight into the site's web
 
 ## Database
 
-For a new installation, import `officeflow-schema.sql`. It creates all 15 tables and is safe to run twice.
+For a new installation, import `officeflow-schema.sql`. It creates all 16 tables and loads five example records into every module, and it is safe to run twice.
 
-`officeflow-schema.sql` is the single source of the database structure. Change it there, and regenerate `app/Schema.php` (the installer's embedded copy) in the same commit so the two never drift. Back up the database before applying structural changes to a live installation.
+`officeflow-schema.sql` is the single source of the database. Change it there, and regenerate the two embedded copies the setup screen uses (`app/Schema.php` for the tables, `app/SampleData.php` for the examples) in the same commit so they never drift. Back up the database before applying structural changes to a live installation.
 
 ## Requirements planned for the app
 

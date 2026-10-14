@@ -78,6 +78,22 @@ class OfficeFlowSchemaTests(unittest.TestCase):
     def test_schema_is_repeatable_and_does_not_drop_existing_data(self):
         self.assertNotRegex(self.schema, r"DROP\s+TABLE|TRUNCATE\s+TABLE")
 
+    def test_the_single_file_also_carries_the_example_content(self):
+        inserts = re.findall(r"INSERT INTO `([^`]+)`", self.schema)
+        for table in (
+            "users", "assets", "vendors", "rooms", "inventory_items", "inventory_transactions",
+            "requests", "request_comments", "tasks", "maintenance_records", "documents",
+            "announcements", "activity_logs", "notifications",
+        ):
+            self.assertIn(table, inserts, f"the example content for {table} is missing")
+
+    def test_examples_wait_for_an_account_and_never_overwrite(self):
+        # An unattended import must not fail: each example block is guarded, and the
+        # examples attach to whichever account exists.
+        self.assertIn("SET @uid :=", self.schema)
+        self.assertEqual(self.schema.count("WHERE @seed = 1"), 13)
+        self.assertIn("WHERE NOT EXISTS (SELECT 1 FROM `users`", self.schema)
+
 
 if __name__ == "__main__":
     unittest.main()
